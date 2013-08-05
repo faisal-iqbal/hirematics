@@ -1,0 +1,46 @@
+<% @candidate_id = Interview.find(@interview_id).try(:candidate_id) %>
+<div style="width: 320px;">
+  <form id="evaluation_new_form" method="post" enctype="multipart/form-data">
+    <h2>Add Evaluation</h2>
+    <div class="lightbox-field-box">
+      <%= text_field :score, "", :placeholder => "Score", :style=>""  %>
+      <%= text_area_tag :evaluation_content, "",
+        :placeholder => "Evaluation details", :rows=>90, :cols=>20,
+        :style=>"height: 200px; width: 305px;" %>
+    </div>
+    <div class="lightbox-btn-main">
+      <div class="clear"></div>
+      <div class="gen-red-btn">
+        <a onclick="post_evaluation_form();"><span>Save</span></a>
+      </div>
+      <span>
+        OR
+        <a onclick="$.fancybox.close(); return false;">Cancel</a>
+      </span>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  function post_evaluation_form()
+  {
+    if(jQuery('#evaluation_new_form').valid())
+    {
+      jQuery.ajax({url:'/create_evaluation',
+        data:'evaluation[content]='+jQuery('#evaluation_content').val()+'&evaluation[score]='+jQuery('#score_').val()+'&evaluation[candidate_id]='+<%= @candidate_id %>+'&evaluation[interview_id]='+<%= @interview_id %>+'&evaluation[user_id]='+<%= current_user.id  %>,
+        success:function(data)
+        {
+          $.fancybox.close();
+          if(data != 'no')
+          {
+            get_mini_evaluation_listing(<%= @candidate_id %>, 'Loading');
+            show_notification_msg('Evaluation added successfully.');
+          }
+          else
+          {
+            show_notification_msg("Sorry, Can't add evaluation.");
+          }
+        }
+      })
+    }
+  }
+</script>

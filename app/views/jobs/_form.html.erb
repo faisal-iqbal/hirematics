@@ -1,0 +1,237 @@
+<div>
+  <%= form_for @job do |f| %>
+    <div class="page-title-box page-title-box-bdr">
+      <div class="create-job-main-box">
+        <div class="points-box">1</div><h3>Job Details<span style="color:red;"><b>*</b>Required Info</span></h3>
+        The information provided in this section will become the job advert
+        that will be displayed on public job boards and your company careers
+        site.
+        <div class="formdiv" for="job_job_title">
+          <label><b>*</b>Job Title</label>
+          <%= f.hidden_field :company_id, :value => session[:current_company_id]%>
+          <%= f.text_field :title, :maxlength=>"100", :size=>"100" %>
+        </div>
+        <div class="formdiv" for="job_department_id"><label>Department</label>
+          <%= f.select :department_id, Department.options_for_select, {:prompt => "--Select Department--"}, 'onchange' => "add_new_dep(this);" %>
+        </div>
+        <a href="/jobs_new_department" id="add_department" class="fancybox" style="display: none;">Add New</a>
+        <div class="formdiv" for="job_location_id"><label><b>*</b>Location</label>
+          <%= f.select :location_id, Location.options_for_select, {:prompt => "--Select Location--"}, 'onchange' => "add_new_loc(this);" %>
+        </div>
+        <a href="/jobs_new_location" id="add_location" class="fancybox" style="display: none;">Add New</a>
+        <div class="formdiv"><label><b>*</b>Category</label>
+          <%=f.select :category_id, Category.all.collect{|c| [c.name, c.id]}, :prompt => "--Select Category--" %>
+        </div>
+        <div class="formdiv"><label>Salary Range</label> <!-- TODO add currency ddl -->
+          <%= f.text_field :salary_range, :maxlength=>"50", :size=>"50" %>
+        </div>
+        <div class="formdiv" for="job_description"><label><b>*</b>Job Description</label>
+          <%= f.text_area :description, :class=>"mceEditor", :rows=>90, :cols=>40, :style=>"height: 200px; width: 490px;" %>
+        </div>
+        <div class="formdiv">
+          <div class="formdiv" for="job_description"><label><b>*</b>Job Evaluation File</label>
+            <%= f.file_field :evaluation %>
+          </div>
+        </div>
+        <div class="create-job-main-box" id="questions_area" style="display: none;"><!-- TODO fix its drag drop as it can go out of boundry of this div -->
+          <div class="points-box">2</div><h3>Questionnaire</h3>
+          <div id="question_intro">
+            Create a questionnaire that will appear in the job application form. Get started by <a onclick="add_question()" style="text-decoration: underline;">adding a question</a>.
+          </div>
+          <div class="create-questionnaire-main" id="job-questionnaire" style="display:none">
+            <div class="questionnaire-addprev-main" id="frm_question" style="display:none">
+              <font>Preview Mode</font>
+              <div><img src="/assets/preview-mode-top.png"/></div>
+              <div class="question-preview">
+                <div class="text_mandatory"><b>*</b>Required Question</div>
+                <ul id="formFields"></ul><!--This id is used for displaying questions-->
+                <p id="q_position" style="display:none">,</p>
+                <input id="question_ids" name="question_ids" type="hidden"/>
+              </div>
+              <div><img src="/assets/preview-mode-bottom.png"/></div>
+            </div><!-- frm_question -->
+            <div id="shownewfields" class="questionnaire-addprev-main" style="margin-left:3px;display:none;">
+              <font>Add Mode</font>
+              <div class="add-mode-mai">
+                <div class="add-mode-box">
+                  <ul>
+                    <li>
+                      <label>Question Text</label>
+                      <span>
+                        <input id="q_desc" maxlength="255" name="q[desc]" onblur="updateProperties(this.value, 'description')" onkeyup="updateProperties(this.value, 'description')" size="255" value="Untitled" type="text"/>
+                      </span>
+                      <span id="fieldPos"></span>
+                    </li>
+                    <li>
+                      <label>Question Type</label>
+                      <select id="q_type" name="q[type]" onchange="javaScript:changeControlType(this.value)">
+                        <option selected="selected" value="textinput">Single Line Text</option>
+                        <option value="textarea">Paragraph Text</option>
+                        <option value="radiobutton">Multiple Choice</option>
+                        <option value="select">Drop Down</option>
+                        <option value="date">Date</option>
+                        <option value="checkbox">Checkboxes</option>
+                        <option value="fileinput">Upload File</option>
+                      </select>
+                    </li>
+                    <li>
+                      <input name="q[vali]" value="notrequired" type="hidden"/><input id="q_vali" name="q[vali]" onclick="updateProperties(this.checked, 'required')" style="margin-left: 129px; margin-top: 4px;" value="required" type="checkbox"/>
+                      <label for="q_vali">Mandatory question</label>
+                    </li>
+                    <span class="clear"></span>
+                    <li id="listChoices" style="display:none">
+                      <fieldset class="choices">
+                        <span class="quest-choices">Choices</span>
+                        <span class="clear"></span>
+                        <ol id="fieldChoices"></ol><!--This id is used for showing choices-->
+                      </fieldset>
+                    </li>
+                    <span class="clear"></span>
+                    <li>
+                      <label for="q_inst" style="width:419px;">Any special instructions for this question:</label>
+                      <textarea cols="40" id="q_inst" name="q[inst]" onblur="updateProperties(this.value, 'inst')" onkeyup="updateProperties(this.value, 'inst')" rows="3"></textarea>
+                    </li>
+                  </ul><!-- shownewfields -->
+                  <div class="add-mood-btn-main">
+                    <div class="gen-red-btn">
+                      <a onclick="validate_question_desc_presence('Please provide Question text.');"><span>Finish</span></a>
+                    </div>
+                    <span>
+                      OR&nbsp;
+                      <a href="javascript:;" onclick="removeControl()">Delete</a>
+                    </span>
+                  </div>
+                </div>
+                <div><img src="/assets/add-mood-bottom.png" height="5" width="473"/></div>
+              </div>
+            </div>
+            <div class="create-questionnaire-bottom"></div>
+          </div>
+          <div class="gen-blue-btn" style="margin-top:-23px;">
+            <a onclick="add_question()"><span><font>+</font> Add Question</span></a>
+          </div>
+        </div>
+
+        <div class="create-job-main-box" style="display:none">
+          <div class="points-box">3</div><h3>Settings</h3>
+          Select settings associated with this job.
+          <div class="clear"></div>
+          <div class="job-application-form">
+            <h4> Email Notifications</h4>
+            Select users who will receive email notifications when new application is received for this job.
+            <div class="clear"></div>
+            <div>
+              <%= f.check_box :send_email_to_creator %>
+              <%= f.label :send_email_to_creator, "Me" %>
+            </div>
+          </div>
+          <div class="job-application-form">
+            <h4> Job Application Form</h4>
+            <div>
+              <%= f.check_box :resume_is_mandatory %>
+              <%= f.label :resume_is_mandatory, "Make resume mandatory for this job" %>
+            </div>
+          </div>
+        </div>
+        <div class="create-job-main-box" style="background:none;">
+          <div class="points-box">2</div><h3>Status</h3>
+          Select a status for this job
+          <div class="publish-job">
+            <div>
+              <%= f.select :status, [["Open", 1], ["Close", 0]], {}, :onchange =>"job_status_msg()" %>
+              <div id="job_status_msg" class="job-status-msgs">
+                This job will be posted to public job boards and your company careers site.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-button-box">
+          <input id="form_submit_btn" style="display: none;" type="submit"/>
+          <div class="gen-blue-btn" style="float:left; margin:0 10px 0 38px;">
+            <a onclick="post_job();"><span id="submit_button_text">Save</span></a>
+          </div>
+          <font>OR</font>
+          <a href="/jobs">Cancel</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    var form_id = $('#job_category_id').closest('form').attr('id');
+    jQuery('#'+form_id).validate({
+      rules: {
+        'job[title]': 'required',
+        'job[category_id]': 'required',
+        'job[location_id]': 'required',
+        'job[evaluation]': 'required'
+      },
+      errorClass: "error-field",
+      errorPlacement: place_validation_error,
+      unhighlight: remove_validation_error
+    });
+  });
+
+  function job_status_msg(){
+    job_status = jQuery('#job_status').val()
+    if(job_status == '1')
+    {
+      jQuery('#job_status_msg').html('This job will be posted to your company careers site.');
+    }
+    else
+    {
+      jQuery('#job_status_msg').html('This job will be created but will not be posted to your company careers site.');
+    }
+  }
+
+  function add_question() {
+    if(total_id==0){
+      Element.hide('question_intro');
+      Element.show('job-questionnaire');
+      Element.show('frm_question');
+      show_field();
+    }
+    else{
+      if(validate_question_desc_presence('Please provide Question text.'))
+      {
+        add_newfield();
+      }
+    }
+  }
+
+  function add_new_dep(obj)
+  {
+    if(obj.value == 'add_new')
+      jQuery('#add_department').trigger('click');
+  }
+
+  function add_new_loc(obj)
+  {
+    if(obj.value == 'add_new')
+      jQuery('#add_location').trigger('click');
+  }
+
+  save_job = function()
+  {
+    if(total_id != 0 && trim($('q_desc').value) == '')
+    {
+      RedBox.showInline('no_q_desc_alert_popup');
+      return;
+    }
+    else if(validate_choices_presence())
+    {
+      submit_form();
+    }
+  }
+
+  post_job = function(){submit_form();}
+
+  function confirm_job_question_del_confirm_popup() {
+    RedBox.close();
+    delete_question_for_empty_choices();
+  }
+  function cancel_job_question_del_confirm_popup() {
+    RedBox.close();
+  }
+</script>

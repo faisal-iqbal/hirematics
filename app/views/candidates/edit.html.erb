@@ -1,0 +1,210 @@
+<div class="page-title-box"><h1><%= @candidate.first_name + " " + @candidate.last_name %></h1></div>
+<div class="appjob-info-main">
+  <span class="status-edit-cls" style="position:relative;">
+    <a href="#" class="resume-link-img" id="app_show_resume_link">Resume</a>
+  </span><font>|</font>
+  Applied for: <span><%=link_to @candidate.job.title, edit_job_path(@candidate.job_id) %></span><font>|</font>
+  Applied on: <span><%= @candidate.created_at.strftime("%d %b %Y") %></span><font>|</font>
+  Status: <span><%=@candidate.status%></span>
+</div>
+<div class="inner-tab-main">
+  <div id="inner-tab">
+    <ul>
+      <li id="app_detail_overview_tab" class="inner-tab-active">
+        <a href="#" onclick="select_applicant_detail_tab(0); return false;">
+          Overview
+        </a>
+      </li>
+      <li id="app_detail_resume_tab">
+        <a href="#" onclick="select_applicant_detail_tab(2); return false;">
+          Resume
+        </a>
+      </li>
+      <li class="" id="app_detail_profile_tab">
+        <a href="#" onclick="select_applicant_detail_tab(1); return false;">
+          Profile
+        </a>
+      </li>
+      <li class="" id="app_detail_interviewer_tab">
+        <a href="#" onclick="select_applicant_detail_tab(6); return false;">
+          Evaluations
+        </a>
+      </li>
+      <li class="" id="app_detail_activity_tab">
+        <a href="#" onclick="select_applicant_detail_tab(5); return false;">
+          Activity
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="tab-content-area-main">
+    <div style="display: block; " class="tab-content-area-box" id="app_detail_overview_tab_content">
+      <div class="overview-main-info">
+        <div class="overview-info-text" id="source_and_ratings">
+          <div class="main-label-div" style="display:none"><b>Your Rating:</b><span id="my_rating"><span title="No Hire!" onmouseover="show_stars(this, 5);" onmouseout="show_original_stars(0, 5);" class="stardim" style="cursor:pointer; float: left; width: 8px;" id="star_1" onclick="new Ajax.Request('/app/update_rating/<%= @candidate.id %>?rating=1', {asynchronous:true, evalScripts:true})">&nbsp;</span><span title="Needs improvement" onmouseover="show_stars(this, 5);" onmouseout="show_original_stars(0, 5);" class="stardim" style="cursor:pointer; float: left; width: 8px;" id="star_2" onclick="new Ajax.Request('/app/update_rating/<%= @candidate.id %>?rating=2', {asynchronous:true, evalScripts:true})">&nbsp;</span><span title="Average" onmouseover="show_stars(this, 5);" onmouseout="show_original_stars(0, 5);" class="stardim" style="cursor:pointer; float: left; width: 8px;" id="star_3" onclick="new Ajax.Request('/app/update_rating/<%= @candidate.id %>?rating=3', {asynchronous:true, evalScripts:true})">&nbsp;</span><span title="Good prospect" onmouseover="show_stars(this, 5);" onmouseout="show_original_stars(0, 5);" class="stardim" style="cursor:pointer; float: left; width: 8px;" id="star_4" onclick="new Ajax.Request('/app/update_rating/<%= @candidate.id %>?rating=4', {asynchronous:true, evalScripts:true})">&nbsp;</span><span title="Must Hire!" onmouseover="show_stars(this, 5);" onmouseout="show_original_stars(0, 5);" class="stardim" style="cursor:pointer; float: left; width: 8px;" id="star_5" onclick="new Ajax.Request('/app/update_rating/<%= @candidate.id %>?rating=5', {asynchronous:true, evalScripts:true})">&nbsp;</span></span></div>
+          <div class="main-label-div" style="display:none"><b>Average Rating:</b><span id="average_rating"> <span class="stardim">&nbsp;</span> <span class="stardim">&nbsp;</span> <span class="stardim">&nbsp;</span> <span class="stardim">&nbsp;</span> <span class="stardim">&nbsp;</span></span></div>
+        </div>
+        <div class="space-div"></div>
+      </div>
+      <div class="overview-info-boxes-wraper">
+        <div class="overview-info-boxes-main">
+          <div class="overview-info-boxes-head">Contact Info</div>
+          <div class="overview-info-boxes">
+            <div class="overview-info-restults">
+              <b>Email</b><span><%= @candidate.email %></span>
+            </div>
+            <div class="overview-info-restults">
+              <b>Phone</b><span><%= @candidate.phone %></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-div"></div>
+      <div class="overview-info-boxes-wraper-eval">
+        <div class="overview-info-boxes-main">
+          <div class="overview-info-boxes-head">
+            Evaluations
+            <div id="hidden_content_new_evaluation_popup_notes_<%= @candidate.id %>" style="display: none;"></div>
+            <a class="fancybox small-tooltip" href="/add_simple_evaluation_popup/<%= @candidate.id %>">
+              <span style="left:-33px; bottom:24px;">
+                Add Evaluation<b></b>
+              </span>
+            </a>
+            <div id="hidden_content_request_evaluation_popup_app_<%= @candidate.id %>" style="display: none;"></div><a style="display:none" class="small-tooltip" href="#" onclick="new Ajax.Updater('hidden_content_request_evaluation_popup_app_<%= @candidate.id %>', '/app/request_evaluation_popup/<%= @candidate.id %>', {asynchronous:true, evalScripts:true, onComplete:function(request){RedBox.addHiddenContent('hidden_content_request_evaluation_popup_app_<%= @candidate.id %>'); }, onLoading:function(request){RedBox.loading();}}); return false;"><span style="left:-42px; bottom:24px;">Request Evaluation<b></b></span><img src="/assets/evaluations-arrow.png"/></a>
+          </div>
+          <div class="overview-info-boxes evaluation_listing mini_evaluation_listing"><div style="padding: 8px 10px;"><span class="spinner">Loading...</span></div></div>
+        </div>
+      </div>
+      <div class="space-div"></div>
+      <div class="overview-info-boxes-wraper-tags">
+        <div class="overview-info-boxes-main">
+          <div class="overview-info-boxes-head">
+            Tags
+            <%if @candidate.tags?%>
+              <% @result = @candidate.tags.strip.split(/,/)%>
+            <%end%>
+          </div>
+          <div class="overview-info-boxes">
+            <div class="overview-info-restults">
+              <%if @candidate.tags?%>
+                <% if(@result.size == 0) %>
+                  <div class="messages-main-box" style="width: 95.8%">No tags added.</div>
+                <%end%>
+              <%end%>
+              <%if @candidate.tags?%>
+                <% if(@result.size > 0) %>
+                  <ul style=" margin: 5px 10px 15px;
+                      overflow: auto;
+                      padding: 0 10px 5px;">
+                      <% @result.each do |r|%>
+                      <li class="overview_tag">
+                        <a> <%= r %>
+                        </a>
+                      </li>
+                    <%end%>
+                  <%end%>
+                </ul>
+              <%end%>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-button-box" style="width:918px;">
+        <div style="float:left; margin:0 10px 0 0;" class="gen-delete-btn">
+          <a href="/candidate_del_confirm_popup/<%=@candidate.id%>" class="fancybox_modal" title="Delete"><span>Delete Candidate</span></a>
+        </div>
+      </div>
+      <script type="text/javascript">
+        get_mini_evaluation_listing(<%= @candidate.id %>, 'Loading');
+        get_mini_interview_listing(<%= @candidate.id %>, 'Loading');
+      </script>
+    </div>
+    <div class="tab-content-area-box" id="app_detail_resume_tab_content" style="display: none; ">
+      <div class="overview-info-boxes-main">
+        <a name="resume"></a>
+        <div class="overview-info-boxes-head-large">Resume
+          <div class="download-resume">
+            <%= link_to "Download" , @candidate.resume.url, :class=>"download-link-img" %>
+          </div>
+        </div>
+        <div class="overview-info-boxes-large">
+          <iframe src="http://docs.google.com/viewer?embedded=true&url=<%=root_url.chomp('/')+@candidate.resume.url%>" style="width: 896px; height: 640px;" frameborder="0"></iframe>
+        </div>
+      </div>
+<%#*<div id="cand_edit">%>
+<%#= render 'form' %>
+<%#*</div>%>
+    </div>
+    <div class="tab-content-area-box" id="app_detail_profile_tab_content" style="display: none; ">
+      <div class="tab-content-title-box"><h2>Profile</h2></div>
+
+      <div id="cand_edit"><%= render 'form' %></div>
+    </div>
+    <!--  <%#*<div class="tab-content-area-box" id="app_detail_evaluations_tab_content" style="display: none; ">%>
+<%#*<div class="tab-content-title-box margin-none">%>
+<%#*<h2>Evaluations</h2>%>
+<%#*<div class="tab-inner-action-button">%>
+<%#*<div class="gen-blue-btn">%>
+<%#*<a href="/add_simple_evaluation_popup/<%= @candidate.id %>" class="fancybox"><span><font>+</font>Add Evaluation</span></a>%>
+<%#*</div>%>
+<%#*</div>%>
+<%#*</div>%>
+<%#*<div class="evaluation_listing">%>
+<%#*<div style="padding: 8px 10px;"><span class="spinner">Loading...</span></div>%>
+<%#*</div>%>
+<%#*</div>%>-->
+    <div class="tab-content-area-box" id="app_detail_interviewer_tab_content" style="display: none; ">
+      <div class="tab-content-title-box margin-none">
+        <h2>Evaluations</h2>
+        <div class="tab-inner-action-button">
+          <div class="gen-blue-btn">
+<%#if current_user.designation_id == 2 || current_user.designation_id == 3%>
+<%#logger.debug "=-=-==-=-=-=-=-==-=-=-=-=-==-=-=-=-=-==-=-#{Designation.all(:conditions => ["title like ?", "%HR%"]).each.inspect}"%>
+            <%logger.debug "=-=-==-=-=-=-=-==-=-=-=-=-==-=-=-=-=-==-=-#{Designation.find(:first, :conditions => ["title like ?", "%HR%"]).try(:id)}"%>
+            <%if current_user.designation_id == Designation.find(:first, :conditions => ["title like ?", "%HR%"]).try(:id)%>
+
+              <a href="/add_interview_popup/<%= @candidate.id %>" class="fancybox"><span><font>+</font>Schedule An Evaluation</span></a>
+            <%end%>
+          </div>
+        </div> 
+      </div>
+      <div class="spin">
+        <img src="/assets/spin.gif" alt ="Folio3"
+             style="background-color:#EEE;border-radius:6px;padding:0 4px; width: 35px; height: 35px;"/>
+      </div>
+      <div class="interview_listing">
+
+        <div style="padding: 8px 10px;"><span class="spinner">Loading...</span></div>
+      </div>
+
+      <div class="clear"></div>
+      <div class="listing-main-box">
+      </div>
+    </div>
+    <div class="tab-content-area-box" id="app_detail_activity_tab_content" style="display: none; ">
+      <div class="tab-content-title-box margin-none">
+        <h2>Activity</h2></div>
+      <div class="clear"></div>
+      <div class="listing-main-box">
+        <table border="0" cellpadding="0" cellspacing="0" width="918">
+          <tbody>
+            <tr>
+              <td class="head-text" height="39" width="200">Date</td>
+              <td class="head-text" width="100">By</td>
+              <td class="head-text" width="716">Activity</td>
+            </tr>
+            <% @candidate.activity_logs.each do |activity| %>
+              <tr>
+                <td height="39"><%= activity.created_at.in_time_zone('Karachi').strftime("%d %b %Y, %I:%M %p")%></td>
+                <td><%= activity.user.name %></td>
+                <td><%= activity.log %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

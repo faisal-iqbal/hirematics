@@ -1,0 +1,37 @@
+<div class="page-title-box">
+  <h1>Reports</h1>
+</div>
+<div class="listing-main-box">
+  <div class="setting-wraper">
+    <div class="lft-section">
+      <ul class="lft-lnks">
+        <li><a href="/reports" id="overview_reports_link">Overview</a></li>
+        <li><a href="/reports/status_pipeline" id="status_pipeline_report_link">Status Pipeline</a></li>
+        <li><a href="/reports/job_stats" id="job_stats_report_link">Job Stats</a></li>
+        <li><a href="/reports/time_in_process" id="time_to_hire_report_link">Time In Process</a></li>
+        <li><a class="active-link" href="/reports/employee_referral" id="employee_referral_link">Employee Referrals</a></li>
+      </ul>
+    </div>
+    <!-- copy all data here -->
+    <div class="rgt-section">
+      <h2><%= @report_heading %></h2>
+      <p><%= @report_description %></p>
+      <table border="0" cellpadding="0" cellspacing="0" width="727">
+        <tr>
+          <th class="head-text" height="39" align="center" >Employee</th>
+          <th class="head-text" height="39" align="center" >Candidates</th>
+        </tr>
+        <% @report_data.each do |row| %>
+          <tr>
+            <%if row.referee %>
+              <td align="center" height="34"> <%= User.find(row.referee).try(:name) %></td>
+            <%else%>
+              <td align="center" height="34"> - </td>
+            <%end%>
+            <td align="center" height="34"> <%= row.total_candidate %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
+  </div>
+</div>

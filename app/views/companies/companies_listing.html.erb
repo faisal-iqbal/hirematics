@@ -1,0 +1,29 @@
+<h1>Companies Listing</h1>
+
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr class="wice_grid_title_row">
+          
+          <th>Company</th>
+          <th>Package</th>
+          <th>Users</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @company.each do |company| %>
+          <tr class="<%= cycle("odd", "even")%>">
+            <td> <a href="/set_company_id/<%=company.id%>"><span><%= company.company_name %></span></a></td>
+            <td><%=  Package.find(company.package).try(:name) %></td>
+            <td><%= company.users.count %></td>
+            <td><%= company.status == true ? "Active" : "Inactive" %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<br />

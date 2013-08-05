@@ -1,0 +1,52 @@
+<div style="width: 320px;">
+  <form id="evaluation_new_form" method="post" enctype="multipart/form-data">
+    <h2>Add Evaluation</h2>
+    <div class="lightbox-field-box">
+      <%= text_field :score, "", :placeholder => "Score", :style=>""  %>
+      <%= text_area_tag :evaluation_content, "",
+        :placeholder => "Evaluation details", :rows=>90, :cols=>20,
+        :style=>"height: 200px; width: 305px;" %>
+
+      <%= select_tag :evaluation_type, options_for_select([
+          ["IQ Test","IQ Test"],
+          ["Programming Test","Programming Test"],
+          ["PM Test","PM Test"],
+          ["MCQs Test","MCQs Test"],
+          ["English Test","English Test"],
+          ["Techncal Test","Techncal Test"]]),
+        {:prompt => "--Select Test Type--", :style=>"width: 317px;"} %>
+      <br />
+      <%= select_tag :checker_id, options_for_select(User.all.collect{ |u| [u.name, u.id] }), {:prompt => 'Checked by', :style=>"width: 317px; margin-top: 5px;"}  %>
+      <br />
+      <%= select_tag :assign_to, options_for_select(User.all.collect{ |u| [u.name, u.id] }), {:prompt => 'Assign To', :style=>"width: 317px; margin-top: 5px;"}  %>
+    </div>
+    <div class="lightbox-btn-main">
+      <div class="clear"></div>
+      <div class="gen-red-btn">
+        <a onclick="post_evaluation_form();"><span>Save</span></a>
+      </div>
+      <span>
+        OR
+        <a onclick="$.fancybox.close(); return false;">Cancel</a>
+      </span>
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  function post_evaluation_form(){
+    if(jQuery('#evaluation_new_form').valid()){
+      jQuery.ajax({url:'/create_evaluation',
+        data:'evaluation[content]='+jQuery('#evaluation_content').val()+'&evaluation[score]='+jQuery('#score_').val()+'&evaluation[evaluation_type]='+jQuery('#evaluation_type').val()+'&evaluation[candidate_id]='+<%= @candidate_id %>+'&evaluation[checker_id]='+jQuery('#checker_id').val()+'&evaluation[assign_to]='+jQuery('#assign_to').val(),
+        success:function(data){
+          $.fancybox.close();
+          if(data != 'no'){
+            get_mini_evaluation_listing(<%= @candidate_id %>, 'Loading');
+            show_notification_msg('Evaluation added successfully.');
+          }else{
+            show_notification_msg("Sorry, Can't add evaluation.");
+          }
+        }
+      })
+    }
+  }
+</script>

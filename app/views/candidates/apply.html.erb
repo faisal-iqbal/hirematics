@@ -1,0 +1,97 @@
+<h1>Apply for a Job at Folio3</h1>
+<%= form_for @candidate do |f| %>
+  <% if @candidate.errors.any? %>
+    <div id="error_explanation" class="valid_box">
+      <h2><%= pluralize(@candidate.errors.count, "Error") %></h2>
+      <ul>
+        <% @candidate.errors.full_messages.each do |msg| %>
+
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  <div class="create-job-main-box" style="border-bottom:none;">
+    <div class="formdiv">
+      <label><b>*</b>Job</label>
+      <%= f.select :job_id, grouped_options_for_select(Job.options_for_select(), @candidate.job_id), :prompt => "-- Select --" %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>First Name</label>
+      <%= f.text_field :first_name, :maxlength=>"50", :size=>"50" %>
+
+    </div>
+  <%#= f.hidden_field :source, :value =>"Folio3 career page"  %>
+    <div class="formdiv">
+      <label><b>*</b>Last Name</label>
+      <%= f.text_field :last_name, :maxlength=>"50", :size=>"50" %>
+
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Phone</label>
+      <%= f.text_field :phone, :maxlength=>"11",:placeholder => "03XXXXXXXXX (Max 11 digits)", :size=>"30" %>
+
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Email</label>
+      <%= f.text_field :email, :placeholder => "someone@example.com", :maxlength=>"255", :size=>"255" %>
+
+    </div>
+
+    <div class="formdiv">
+      <label>Source</label>
+      <%= f.select(:source, Source.all.collect{|u| [u.name, u.id]},
+        {:prompt => true},
+        {:onChange => 'folio_ref();'}) %>
+    </div>
+    <div class="formdiv ref_apply" style="display: none">
+      <label>Folio3 employee</label>
+      <%=  f.text_field :employee_reference, :placeholder => "Name/Email", :maxlength=>"255", :size=>"255"  %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Resume</label>
+      <%= f.file_field :resume %>
+
+    </div>
+
+  </div>
+  <div class="form-button-box">
+    <div class="gen-red-btn" style="float:left;">
+      <input type="submit" id="form_submit_btn" style="display: none;" />
+      <a href="#" onclick="submit_form(); return false;"><span>Apply</span></a>
+    </div>
+    OR <%= link_to "Cancel", job_board_path %>
+  </div>
+<% end %>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery('#new_candidate').validate({
+      rules: {
+        'candidate[job_id]': 'required',
+        'candidate[first_name]': 'required',
+        'candidate[last_name]': 'required',
+        'candidate[phone]': 'required',
+        'candidate[email]': 'required',
+        'candidate[resume]': 'required'
+      },
+      errorClass: "error-field",
+      errorPlacement: place_validation_error,
+      unhighlight: remove_validation_error
+    });
+  });
+  function folio_ref(){
+    var e = document.getElementById("candidate_source");
+    var source = e.options[e.selectedIndex].text;
+    if(source == 'Folio3 employee')
+    {
+
+      jQuery('.ref_apply').show();
+    }
+    else
+    {
+      jQuery('.ref_apply').hide();
+      jQuery('#candidate_employee_reference').attr("value", "")
+    }
+  }
+</script>
+

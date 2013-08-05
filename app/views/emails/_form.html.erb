@@ -1,0 +1,32 @@
+<%= form_for(@email) do |f| %>
+  <div class="create-job-main-box" style="border-bottom:none;">
+    <div class="formdiv">
+      <label><b>*</b>Action</label>
+      <%= f.text_field :do_action %>
+      <% if @email.errors[:do_action] %>
+        <span class="valid_new_candidate"><%= @email.errors[:do_action].join('<br />').html_safe %></span>
+      <% end %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Subject</label>
+      <%= f.text_field :subject %>
+      <% if @email.errors[:subject] %>
+        <span class="valid_new_candidate"><%= @email.errors[:subject].join('<br />').html_safe %></span>
+      <% end %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Body</label>
+      <%= f.text_area :body, :class=>"mceEditor", :rows=>90, :cols=>40, :style=>"height: 200px; width: 490px;" %>
+      <% if @email.errors[:body] %>
+        <span class="valid_new_candidate"><%= @email.errors[:body].join('<br />').html_safe %></span>
+      <% end %>
+    </div>
+  </div>
+  <div class="form-button-box">
+    <div class="gen-red-btn" style="float:left;">
+      <input type="submit" id="form_submit_btn" style="display: none;" />
+      <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+    </div>
+    OR <%= link_to "Cancel", emails_path %>
+  </div>
+<% end %>

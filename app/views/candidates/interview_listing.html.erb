@@ -1,0 +1,70 @@
+<% if @candidate.interviews.size > 0 %>
+  <% @candidate.interviews.each do |interviews| %>
+    <script type="text/javascript">
+      var div_name = "<%=interviews.id%>";
+      var field = 'Test'
+      var test = "<%=interviews.interview_type%>";
+      if (test.indexOf(field) != -1)
+      {
+        jQuery('.'+ div_name).show();
+      }
+      else{
+        if(test.indexOf(field) == -1)
+        {
+          jQuery('.'+ div_name).hide();
+        }
+      }
+      
+    </script>
+    <div class="messages-main-box">
+
+      <%="#{interviews.interview_date.strftime("%A, %B %d, %Y")}"%><span>  |  </span><%="#{interviews.interview_type}"%>
+      <div class="fl_right">
+        <%if current_user.admin?%>
+          <div class="fl_right">
+            <a href="/edit_interview_popup/<%=interviews.id%> " class="fancybox" ><span>Edit</span></a>
+            <span> | </span>
+            <a href="/interview_del_confirm_popup/<%=interviews.id%>" class="fancybox_modal"><span>Delete</span></a>
+          </div>
+          <br />
+        <%end%>
+      </div>
+      <br /><br />
+      <div class="<%=interviews.id%>" style="display: none;">
+        <%= "Test Evaluation By HR" %>
+        <% if current_user.designation_id == 2 || current_user.designation_id == 3%>
+          <a href="/add_simple_evaluation_popup/<%= interviews.candidate_id %>" class="fancybox" >Add evaluation</a>
+        <%end%>
+        <br /><br />
+      </div>
+      <%if interviews.user_id?%>
+        <%= "#{interviews.user.try(:name)}"%>
+        <% if current_user.id == interviews.user.id || current_user.designation_id == 2 || current_user.designation_id == 3 %>
+          <a href="/add_evaluation_popup/<%= interviews.id %>" class="fancybox" >Add evaluation</a>
+        <%end%>
+        <br /><br />
+      <%end%>
+
+      <%if interviews.user_id_1?%>
+        <%= "#{User.find_by_id(interviews.user_id_1).try(:name)}"%>
+        <% if current_user.id == interviews.user_id_1 || current_user.designation_id == 2 || current_user.designation_id == 3%>
+          <a href="/add_evaluation_popup/<%= interviews.id %>" class="fancybox" >Add evaluation</a>
+        <%end%>
+      <%end%>
+
+
+    </div>
+  <% end %>
+<% else %>
+  <div class="messages-main-box">No interviews added.</div>
+<% end %>
+
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('.fancybox').fancybox();
+    jQuery(".fancybox_modal").fancybox({
+      modal:      true,
+      titleShow:  false
+    });
+  });
+</script>

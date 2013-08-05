@@ -1,0 +1,23 @@
+<div>
+<!--form id="evaluation_new_form" action="/create_evaluation" method="post" enctype="multipart/form-data"-->
+<%= form_for @evaluation, :url => "/create_evaluation" do |f| %>
+  <h2>Add Evaluation</h2>
+  <div class="lightbox-field-box">
+    <%= f.text_area :content, :rows=>90, :cols=>20, :style=>"height: 200px; width: 305px;" %>
+  </div>
+  <div class="lightbox-field-box">
+    <%= f.file_field :document %>
+  </div>
+  <div class="lightbox-btn-main">
+    <div class="clear"></div>
+	<div class="gen-red-btn" style="float:left;">
+      <input type="submit" id="form_submit_btn" style="display: none;" />
+      <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+    </div>
+    <span>
+      OR
+      <a onclick="$.fancybox.close(); return false;">Cancel</a>
+    </span>
+  </div>
+<% end %>
+</div>

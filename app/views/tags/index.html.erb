@@ -1,0 +1,33 @@
+<h1>Listing tags</h1>
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <div class="page_info" style="float: right">
+      <%= page_entries_info @tags %>
+    </div>
+    <div class="clear">
+    </div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <tr class="wice_grid_title_row">
+        <th>Name</th>
+        <th></th>
+        <th></th>
+      </tr>
+
+      <% @tags.each do |tag| %>
+        <tr class="<%= cycle("odd", "even")%>">
+          <td><%= tag.name %></td>
+          <td><%= link_to 'Show', tag %></td>
+          <td><%= link_to 'Delete', tag, :confirm => 'Are you sure?', :method => :delete %></td>
+        </tr>
+      <% end %>
+    </table>
+  </div>
+</div>
+<br />
+<%= link_to 'New Tag', new_tag_path %>
+<div>
+   <div class="pagination">
+    <%= will_paginate @tags, :container => false %>
+  </div>
+</div>

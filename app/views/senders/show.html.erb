@@ -1,0 +1,20 @@
+<div style=" background-color: #EEE;
+     color:#000;
+     border-radius: 10px;
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     border: 1px solid #000;
+     padding: 10px;">
+  <h2>
+    Username
+  </h2>
+  <p>
+    <%= @sender.username %>
+  </p>
+</div>
+<div class="clear">
+</div>
+<div style="padding-top: 10px;">
+  <%= link_to 'Edit', edit_sender_path(@sender) %> |
+  <%= link_to 'Back', senders_path %>
+</div>

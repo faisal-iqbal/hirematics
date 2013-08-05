@@ -1,0 +1,166 @@
+<div class="page-title-box">
+  <h1>Candidates</h1>
+  <div class="top-action-button-box">
+    <div class="gen-blue-btn"> 
+      <a href="<%= new_candidate_path %>">
+        <span>
+          <font>+</font> Create Candidate</span>
+      </a> </div>
+  </div>
+</div>
+
+<div class="filter-pages-main">
+  <div class="filter-box">
+    <form>
+      <%= select_tag :filter_by_jobs,
+        grouped_options_for_select(Job.options_for_select, params[:job]),
+        {:prompt => "All Jobs", :onchange=>"filter_candidates()"} %>
+      <%= select_tag :filter_by_status,
+        options_for_select(CandidateStatus.all.collect{|s| [s.name,s.id]}, params[:status]),
+        {:prompt => "All Statuses", :onchange=>"filter_candidates()"} %>
+      <%= select_tag :select, options_for_select([
+          ["Search By Name", "Name"],
+          ["Search By tag", "Tag"]]),
+        {:prompt => "Please Select", :onchange => "filter_select_type()"}  %>
+      <div class="text-search-box by-tag" style="display: none; " >
+        <input id="keyword_filter_cand" name="keyword" type="text"
+               value="<%=params[:keyword]%>" placeholder="Search by tags"/>
+        <input value="" type="submit" onclick="filter_candidates();"/>
+      </div>
+      <div class="text-search-box by-name" style="display: none;" >
+
+        <input id="keyword_filter_cand_name" name="name" type="text"
+               value="<%=params[:name]%>" placeholder="Search by names"/>
+        <input value="" type="submit" onclick="filter_candidates();"/>
+
+      </div>
+    </form>
+    <div class="pagination-main" style="display: none;">
+      <div class="pages-next-prev">
+      </div>
+      <span class="page_info">1-3 of 3</span>
+    </div>
+  </div>
+</div>
+<div class="page_info" style="float: right">
+  <%= page_entries_info @candidates %>
+</div>
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr class="wice_grid_title_row">
+          <th></th>
+          <th width="180">Name</th>
+          <th width="150">Applied for</th>
+          <th width="90">Applied on</th>
+          <% if current_user.admin? %>
+            <th width="250">Source</th>
+          <% end %>
+          <th style="text-align: center; padding-left: 0pt;" width="180">Status</th>
+          <th class="hide_show_icon" width="30"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @candidates.size > 0 %>
+          <% @candidates.each do |candidate| %>
+            <tr class="<%= cycle("odd", "even")%> C<%=candidate.id%>">
+              <td class="sel" id="ckbNo" height="34" width="19">
+                <%if candidate.new_resume?%>
+                  <script>
+                    jQuery('.C'+<%= candidate.id%>).closest('tr').addClass('unread');
+                  </script>
+
+                <%end%>
+              </td>
+
+              <td width="180"><%= link_to candidate.name,
+                  candidate_path(candidate), :title => candidate.name %></td>
+              <td width="150"><%= content_tag(:div, candidate.job.title,
+                  :title=>candidate.job.title) %></td>
+              <td width="90"><%= candidate.created_at.strftime("%d %b %Y") %></td>
+              <% if current_user.admin? %>
+                <td width="250">
+                  <%= "#{Source.find(:first, :conditions=> { :id=> candidate.source}).try(:name)} #{User.find(:first, :conditions=> { :id=> candidate.referral}).try(:name)}" %>
+                  <%if candidate.employee_reference%>
+                    <%= candidate.employee_reference %>
+                  <%end%>
+                </td>
+              <% end %>
+              <td style="text-align: center; padding-left: 0pt;" width="180">
+                <div class="outer4">
+                  <b class="b1"></b>
+                  <b class="b2"></b>
+                  <b class="b3"></b>
+                  <div class="contentstage<%=candidate.candidate_status.id rescue 1 %> app-status-radius">
+                    <%= content_tag(:div, candidate.status, :title=>candidate.status, :class=>"contentstage") %>
+                  </div>
+                  <b class="b3"></b>
+                  <b class="b2"></b>
+                  <b class="b1"></b>
+                </div>
+              </td>
+              <!--td style="text-align: center;" width="120">
+              <% candidate.rating.times do %>
+                                                                                                                                                                  <span title="<%= candidate.rating %>" class="star"></span>
+              <% end if candidate.rating %>
+              <% (5 - (candidate.rating||0)).times do %>
+                                                                                                                                                                  <span class="stardim"></span>
+              <% end %>
+              </td-->
+              <td width="30"></td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="8"><div style="text-align:center;line-height:20px">No candidate found. Try viewing <%= link_to "all candidate", candidates_path %></div></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination">
+    <%= will_paginate @candidates, :container => false %>
+  </div>
+
+  <% if @candidates.size > 0 %>
+    <div class="export-listing small-tooltip">
+      <span style="left:-20px;"><b></b> Export Candidates </span>
+      <%= link_to "Export", candidate_export_path(:status=>params[:status], :job => params[:job]) %>
+    </div>
+  <% end %>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('#keyword_filter_cand').attr('value','');
+    jQuery('#keyword_filter_cand_name').attr('value','');
+  });
+  function filter_select_type()
+  {
+    var type = jQuery('#select').val();
+    if(type == 'Name')
+    {
+      jQuery('.by-name input').removeAttr("disabled");
+      jQuery('.by-name').show();
+      jQuery('.by-tag input').attr("disabled", "disabled");
+      jQuery('.by-tag').hide();
+      jQuery('#keyword_filter_cand').attr('value','');
+    }
+    else
+      if(type == 'Tag')
+    {
+      jQuery('.by-name input').attr("disabled", "disabled");
+      jQuery('.by-name').hide();
+      jQuery('.by-tag input').removeAttr("disabled");
+      jQuery('.by-tag').show();
+      jQuery('#keyword_filter_cand_name').attr('value','');
+    }
+    else
+    {
+      jQuery('.by-name').hide();
+      jQuery('.by-tag').hide();
+      jQuery('#keyword_filter_cand_name').attr('value','');
+      jQuery('#keyword_filter_cand').attr('value','');
+    }
+   
+  }
+</script>

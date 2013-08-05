@@ -1,0 +1,55 @@
+<div>
+  <% if @candidate.evaluations.size > 0 %>
+    <% @candidate.evaluations.each do |evaluation| %>
+      <%@id = evaluation.id%>
+      <div class="messages-main-box" >
+        <%if evaluation.evaluation_type%>
+          <%= "#{evaluation.evaluation_type} | " %>
+        <%end%>
+        <%=evaluation.content%>
+        <%if current_user.admin?%>
+          <div class="fl_right">
+            <a href="/edit_evaluation_popup/<%=evaluation.id%> " class="fancybox" >Edit evaluation</a>
+          </div>
+          <br />
+        <%end%>
+        <% if evaluation.user_id %>
+          <%= "Evaluation added by: #{User.find_by_id(evaluation.user_id).try(:name)}" %>
+        <%end%>
+
+        <% if evaluation.score %>
+          <div class="fl_right">
+            <%= "Score:  #{evaluation.score}"%>
+          </div>
+        <%end%>
+
+        <% if evaluation.checker_id %>
+          <div>
+            <%= "Checked by:  #{User.find_by_id(evaluation.checker_id).try(:name)}"%>
+          </div>
+        <%end%>
+        <% if evaluation.assign_to %>
+          <div>
+            <%= "Assigned to:  #{User.find_by_id(evaluation.assign_to).try(:name)}"%>
+          </div>
+        <%end%>
+      </div>
+      <% unless evaluation.document_file_name.blank? %>
+        <div class="messages-main-box">
+          <%= link_to "Evaluation File", evaluation.document.path %>
+        </div>
+      <% end %>
+    <% end %>
+  <% else %>
+    <div class="messages-main-box">No evaluations added.</div>
+  <% end %>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('.fancybox').fancybox();
+    jQuery(".fancybox_modal").fancybox({
+      modal:      true,
+      titleShow:  false
+    });
+  })
+</script>

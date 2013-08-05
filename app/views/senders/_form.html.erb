@@ -1,0 +1,97 @@
+<%= form_for(@sender) do |f| %>
+  <% if @sender.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@sender.errors.count, "error") %> prohibited this sender from being saved:</h2>
+
+      <ul>
+        <% @sender.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="create-job-main-box" style="border-bottom:none;">
+    <div class="formdiv">
+      <label><b>*</b>Server</label>
+      <%= f.select(:server, options_for_select([
+            ["Please Select", ""],
+            ["Gmail", "Gmail"],
+            ["Hotmail", "Hotmail"],
+            ["Other","Other"]]
+          ), {:prompt => "-- server --"},
+        {:onChange => 'server_settings()'}) %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Username</label>
+      <%= f.text_field :username %>
+    </div>
+    <div class="formdiv">
+      <label><b>*</b>Password</label>
+      <%= f.password_field :password %>
+    </div>
+    <div class="optional-settings" style="display: none">
+      <div class="formdiv">
+        <label><b>*</b>Address</label>
+        <%= f.text_field :address %>
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Port</label>
+        <%= f.text_field :port %>
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Domain</label>
+        <%= f.text_field :domain %>
+      </div>
+    </div>
+  </div>
+  <div class="form-button-box">
+    <div class="gen-red-btn" style="float:left;">
+      <input type="submit" id="form_submit_btn" style="display: none;" />
+      <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+    </div>
+    OR <%= link_to "Cancel", senders_path %>
+  </div>
+<% end %>
+<script type="text/javascript">
+  function server_settings()
+  {
+    var serv = jQuery('#sender_server').val();
+    if(serv == 'Other')
+    {
+      other_setting();
+    }
+    else
+    {
+      jQuery('.optional-settings').hide();
+      if(serv == 'Gmail')
+      {
+        gmail_setting();
+      }
+     
+      if(serv == 'Hotmail')
+      {
+        hotmail_setting();
+      }
+    }
+  }
+  function gmail_setting()
+  {
+    jQuery('#sender_address').attr('value', 'smtp.gmail.com');
+    jQuery('#sender_port').attr('value', 587);
+    jQuery('#sender_domain').attr('value', 'mail.google.com');
+  }
+  function hotmail_setting()
+  {
+    jQuery('#sender_address').attr('value', 'smtp.live.com');
+    jQuery('#sender_port').attr('value', 587);
+    jQuery('#sender_domain').attr('value', 'mail.live.com');
+  }
+  function other_setting()
+  {
+    jQuery('.optional-settings').show();
+    jQuery('#sender_address').attr('value', '');
+    jQuery('#sender_port').attr('value', '');
+    jQuery('#sender_domain').attr('value', '');
+  }
+</script>

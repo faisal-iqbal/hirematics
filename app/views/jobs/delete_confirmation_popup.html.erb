@@ -1,0 +1,15 @@
+  <div class="alrt-message-box" id="job_del_confirm_popup">
+    <div class="alrt-msg-text">Are you sure you want to delete this job?</div>
+    <div class="alrt-buttons-box" align="center">
+      <input value="OK" onclick="confirm_job_del_confirm_popup(); return true;" type="button"/>
+      <%= link_to '', @job, 'data-method' => :delete, :id=>"job_delete_link",:style=>"display:none" %>
+      <input value="Cancel" onclick="javascript:$.fancybox.close();" type="button"/>
+    </div>
+    <div class="clear"></div>
+  </div>
+<script type="text/javascript">
+  function confirm_job_del_confirm_popup() {
+    $.fancybox.close();
+    jQuery("#job_delete_link").trigger("click");
+  }
+</script>

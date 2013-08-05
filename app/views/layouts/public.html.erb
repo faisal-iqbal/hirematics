@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= params[:controller].capitalize %></title>
+    <%= stylesheet_link_tag    "application" %>
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "/javascripts/tiny_mce/tiny_mce" %>
+    <%= javascript_include_tag "https://www.google.com/jsapi" if @google_chart_api_js %>
+    <%= csrf_meta_tags %>
+    <%= javascript_tag do %>
+    function filter_candidates() {
+      var request_url = "/candidates?";
+      var jobs_id = jQuery("#filter_by_jobs").val();
+      var status_id = jQuery("#filter_by_status").val();
+      if(jobs_id != "")
+        request_url+= "job="+jobs_id;
+      if(status_id != "")
+        request_url+= "&status="+status_id;
+      window.location = request_url;
+    }
+    function filter_jobs() {
+      var request_url = "/jobs?";
+      var status = jQuery("#status_filter").val();
+      var dept_id = jQuery("#department_filter").val();
+      var loc_id = jQuery("#location_filter").val();
+      var kw_filter = jQuery("#keyword_filter").val();
+      if(status != "")
+        request_url+= "status="+status;
+      if(dept_id != "")
+        request_url+= "&department_id="+dept_id;
+      if(loc_id != "")
+        request_url+= "&location_id="+loc_id;
+      if(kw_filter != "")
+        request_url+= "&keyword="+kw_filter;
+      window.location = request_url;
+      return false;
+    }
+    var notification_msg = '<%= notice %>';
+    if(notification_msg != ''){
+      jQuery(document).ready(function(){show_notification_msg('<%= notice %>');});
+    }
+	var notification_msg = '<%= alert %>';
+    if(notification_msg != ''){
+      jQuery(document).ready(function(){show_notification_msg('<%= alert %>');});
+    }
+    <% end %>
+  </head>
+  <body>
+    <!-- Start Wraper -->
+    <div class="wraper">
+      <!-- Start Header -->
+      <div id="header">
+        <a href="/" id="logo"><img src="/assets/folio3-logo.png" alt ="Folio3" style="background-color:#EEE;border-radius:6px;padding:0 4px"></a>
+        <div class="top-right-main">
+          <div class="top-applicant-box"><%= link_to('Login', new_user_session_path, :class=>"top-applicant-name") %></div>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <!-- End Header -->
+      <!-- Start Body Area -->
+      <div id="body-area">
+        <div id="content">
+          <div class="notfication-msg" id="notfication_msg_box" style="display: none">
+            <img src="/assets/message-ok.png"><%= notice %>
+          </div>
+          <input id="js_validation_gen_error" value="Please fix the highlighted errors and try again." type="hidden">
+          <div class="error-message" id="error_message_box" style="display: none;">
+            <img src="/assets/error-msg-icon.png"><%= alert %>
+          </div>
+          <%= yield %>
+        </div>
+        <div class="bottom-bg-box"></div>
+        <!-- Start Footer -->
+        <div class="footer-main">
+          <div class="footer-logo">FOLIO3 PVT. LTD. ALL RIGHTS RESERVED</div>
+          <div class="footer-links">
+            <a href="folio3.com">Folio3.com</a>
+          </div>
+        </div>
+        <!-- End Footer -->
+      </div>
+      <!-- End Body Area -->
+    </div>
+    <!-- End Wraper -->
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<div style="width: 320px;">
+  <%= form_for @interview, :url => "/create_interview" do |f| %>
+    <h2>Update An Evaluation</h2>
+    <div class="lightbox-field-box">
+      <div>
+        <%= f.select(:interview_type,
+          CandidateStatus.find(:all, :conditions => {:is_evaluation => true}).collect{|e| [e.name, e.name]},
+          {:prompt => "--Evaluation Type--"}, {:onChange => 'interviewer();', :style=>"width: 317px;"})%>
+      </div>
+      <br/>
+      <div>
+        <input class="filter_date_default_color" id="interview_date"
+               name="start_date" size="11" value="" placeholder="Date"
+               type="text" style="width: 305px;"/>
+      </div>
+      <br/>
+
+      <div>
+        <%= f.select :location_id, Location.all.collect{ |l| [l.city,l.id]},
+          {:prompt => "Location"}, {:style => "width: 317px;"} %>
+      </div>
+      <div class="interviewer-div" style="display: none">
+        <br />
+        <div>
+          <%= f.select :user_id, User.find(:all,
+            :conditions => {:designation_id => '4'}).collect{ |s| [s.name,s.id]},
+            {:prompt => "Interviewer 1"}, {:style => "width: 317px;"} %>
+        </div>
+        <br />
+        <div>
+          <%= f.select :user_id_1, User.find(:all,
+            :conditions => {:designation_id => '4'}).collect{|s| [s.name,s.id]},
+            {:prompt => "Interviewer 2"}, {:style => "width: 317px;"} %>
+        </div>
+      </div>
+      <br />
+    </div>
+    <div class="lightbox-btn-main">
+      <div class="clear"></div>
+      <div class="gen-red-btn">
+        <a onclick="post_interview_form();"><span>Save</span></a>
+      </div>
+      <span>
+        OR
+        <a onclick="$.fancybox.close(); return false;">Cancel</a>
+      </span>
+      <div class="fl_right">
+        <span class="en-notify">
+          <%= f.check_box :notify %>
+          Notify
+        </span>
+      </div>
+    </div>
+
+  <%end%>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    jQuery('#interview_date').attr('value','<%= @interview.interview_date %>');
+    interviewer();
+  });
+  var inter = 0;
+  function post_interview_form(){
+    if(jQuery('#interview_location_id').val() == '')
+    {
+      $.fancybox.close();
+      show_error_msg("Please select a location");
+    }
+    else{
+      if(jQuery('#interview_user_id').val() == '' && inter == 1)
+      {
+        $.fancybox.close();
+        show_error_msg("Please select first interviewer");
+      }
+      else
+      {
+        if(jQuery('#interview_user_id_1').val() == jQuery('#interview_user_id').val() && inter == 1)
+        {
+          $.fancybox.close();
+          show_error_msg("Please select distinct interviewers");
+        }
+        else
+        {
+          if(jQuery('#interview_date').val() == '')
+          {
+            $.fancybox.close();
+            show_error_msg("Please select a date");
+          }
+          else
+          {
+            if(jQuery('#edit_interview_'+ <%= @interview.id %>).valid()){
+              $.fancybox.close();
+              jQuery.ajax({url:'/edit_interview',
+                data:'interview[interview_date]='+jQuery('#interview_date').val()+'&interview[user_id]='+jQuery('#interview_user_id').val()+'&interview[user_id_1]='+jQuery('#interview_user_id_1').val()+'&interview[location_id]='+jQuery('#interview_location_id').val()+'&interview[interview_type]='+jQuery('#interview_interview_type').val()+'&interview[candidate_id]='+<%= @candidate_id %>+'&interview[id]='+<%= @interview.id %>+'&interview[notify]='+jQuery('#interview_notify').is(':checked'),
+                success:function(data){
+                  if(data != 'no'){
+                    show_notification_msg('Evaluation updated successfully.');
+                    get_mini_interview_listing(<%= @candidate_id %>, 'Loading');
+                  }
+                  else{
+                    show_notification_msg("Sorry, Can't update evaluation.");
+                  }
+                }
+              })
+            }
+          }
+        }
+      }
+    }
+  }
+  jQuery(function() {
+    jQuery( "#interview_date" ).datetimepicker({
+      dateFormat: 'yy-mm-dd',
+      timeFormat: 'hh:mm tt',
+      inline: true,
+      onSelect: function(dateText, inst){
+        jQuery(this).attr('class', 'filter_date_applied_color');
+      }
+    })
+  });
+  function interviewer()
+  {
+    var e = document.getElementById("interview_interview_type");
+    var text = e.options[e.selectedIndex].text;
+    if(text.indexOf('view') != -1)
+    {
+      inter = 1;
+      jQuery('.interviewer-div').show();
+    }
+    else
+    {
+      inter = 0;
+      jQuery('.interviewer-div').hide();
+      jQuery('#interview_user_id').attr("value", "");
+      jQuery('#interview_user_id_1').attr("value", "");
+    }
+  }
+</script>

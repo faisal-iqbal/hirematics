@@ -1,0 +1,45 @@
+<% if @action=='create' %>
+  <h1>Create New User</h1>
+<% else %>
+  <h1>User: <%= @user.email -%></h1>
+<% end %>
+<%= errors_for(@user) %>
+<div id="edit_body">
+  <div class="edit_buttons">
+    
+  </div>
+  <%= form_for(@user, :url => "/members/#{@action}", :html=>{:id => "save_user"}) do |f| %>
+    <div class="create-job-main-box" style="border-bottom:none;">
+        <%= f.hidden_field :id %>
+        <div class="formdiv"><label>First Name</label><%= f.text_field :first_name %></div>
+        <div class="formdiv"><label>Last Name</label><%= f.text_field :last_name %></div>
+        <div class="formdiv"><%= f.label :email %><%= f.email_field :email %></div>
+        <div class="formdiv"><label>Phone</label><%= f.text_field :phone %></div>
+        <div class="formdiv"><%= f.label :designation_id %><%= f.select :designation_id, Designation.options_for_select %></div>
+        <div class="formdiv"><%= f.label :password %><%= f.password_field :password %><% if @action=='update' %><i>(leave blank if you don't want to change it)</i><% end %></div>
+        <div class="formdiv"><%= f.label :password_confirmation %><%= f.password_field :password_confirmation %></div>
+        <%= f.hidden_field :company_id, :value => session[:current_company_id]%>
+
+        <% if current_user.admin? %>
+            <div class="formdiv"><%= f.label :admin %><%= f.check_box :admin %></div>
+        <% end %>
+    </div>
+	<div class="form-button-box">
+            <div class="gen-red-btn" style="float:left;">
+              <input type="submit" id="form_submit_btn" style="display: none;" />
+              <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+            </div>
+            OR <%= link_to "Cancel", members_path %>
+	</div>
+  <% end %>
+</div>
+<% content_for(:head) do %>
+  <script type="text/javascript">
+    jQuery(document).ready(function(){
+      jQuery("a#save_user_btn").click(function(){
+        jQuery("form#save_user").submit();
+        return false;
+      })
+    });
+  </script>
+<% end %>

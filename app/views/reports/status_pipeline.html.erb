@@ -1,0 +1,67 @@
+<div class="page-title-box">
+  <h1>Reports</h1>
+</div>
+<div class="listing-main-box">
+  <div class="setting-wraper">
+    <div class="lft-section">
+      <ul class="lft-lnks">
+        <li><a href="/reports" id="overview_reports_link">Overview</a></li>
+        <li><a class="active-link" href="/reports/status_pipeline" id="status_pipeline_report_link">Status Pipeline</a></li>
+        <li><a href="/reports/job_stats" id="job_stats_report_link">Job Stats</a></li>
+        <li><a href="/reports/time_in_process" id="time_to_hire_report_link">Time In Process</a></li>
+        <li><a href="/reports/employee_referral" id="employee_referral_link">Employee Referrals</a></li>
+      </ul>
+    </div>
+
+    <div class="rgt-section">
+      <h2><%= @report_heading %></h2>
+      <p><%= @report_description %></p>
+
+      <div class="filter-box reports-filter-box">
+        <%= form_tag "/reports/status_pipeline" do %>
+          <%= select_tag :job_id, grouped_options_for_select(Job.options_for_select, params[:job]), :prompt => "All Jobs" %>
+          <label>From</label>
+          <input class="filter_date_default_color" id="jobs_search_from" name="start_date" size="11" value="" placeholder="YYYY-MM-DD" type="text"/>
+          <label>To</label>
+          <input class="filter_date_default_color" id="jobs_search_to" name="end_date" size="11" value="" placeholder="YYYY-MM-DD" type="text"/>
+          <%= submit_tag "Apply"  %>
+        <% end %>
+      </div>
+
+<% if @report_data.size > 0 %>
+        <table border="0" cellpadding="0" cellspacing="0" width="727">
+          <tr>
+            <% @report_data[0].keys.each do |key| %>
+              <th class="head-text" height="39" align="center" width="<%= "#{100/@report_data[0].keys.size}%" %>"><%= key.humanize %></th>
+            <% end %>
+          </tr>
+          <% @report_data.each do |row| %>
+            <tr>
+              <% row.values.each do |value| %>
+                <td align="center" height="34"><%= value %></td>
+              <% end %>
+            </tr>
+          <% end %>
+        </table>
+        <div class="download-doc-div" style="display:none;">
+          <img src="status_pipeline_files/excel-icon.png"/> <a href="/reports/status_pipeline.xls?selected_job_id=&amp;from_time=04/17/2012&amp;to_time=04/27/2012">Download Excel</a>
+          <img src="status_pipeline_files/pdf-icon.png"/> <a href="/reports/status_pipeline.pdf?selected_job_id=&amp;from_time=04/17/2012&amp;to_time=04/27/2012">Download PDF</a>
+        </div>
+      <% else %>
+        <p>No records found</p>
+      <% end %>
+
+      <p class="tip"><span>Tip:</span> Use this report to identify potential bottlenecks in your hiring pipeline.</p>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(function() {
+    jQuery( "#jobs_search_from, #jobs_search_to" ).datepicker({
+      inline: true,
+      onSelect: function(dateText, inst){
+        jQuery(this).attr('class', 'filter_date_applied_color');
+      }
+    })
+  });
+</script>

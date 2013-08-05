@@ -1,0 +1,46 @@
+<div style="width: 320px;">
+  <h2>
+    Edit Evaluation
+  </h2>
+  <div class="lightbox-field-box">
+    <div>
+      <textarea class="content" cols="15" rows="90"
+                style="height:200px; width: 305px;" ><%=@evaluation.content%></textarea>
+      <input type="text" style="width: 305px;" value="<%=@evaluation.score%>"></input>
+      
+
+    </div>
+    <div class="lightbox-btn-main">
+      <div class="clear"></div>
+      <div class="gen-red-btn">
+        <a onclick="post_evaluation_form();"><span>Save</span></a>
+      </div>
+      <span>
+        OR
+        <a onclick="$.fancybox.close(); return false;">Cancel</a>
+      </span>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  function post_evaluation_form()
+  {
+    jQuery.ajax({
+      url:'/edit_evaluation',
+      data:'evaluation[content]='+jQuery('.content').val()+'&evaluation[score]='+jQuery('.score').val()+'&evaluation[id]='+<%= @evaluation.id %>,
+      success:function(data)
+      {
+        $.fancybox.close();
+        if(data != 'no')
+        {
+          get_mini_evaluation_listing(<%= @evaluation.candidate_id %>, 'Loading');
+          show_notification_msg('Evaluation updated successfully.');
+        }
+        else
+        {
+          show_notification_msg("Sorry, Can't update evaluation.");
+        }
+      }
+    })
+  }
+</script>

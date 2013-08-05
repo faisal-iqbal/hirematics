@@ -1,0 +1,45 @@
+<div class="page-title-box">
+  <h1>Users</h1>
+  <div class="top-action-button-box">
+    <div class="gen-blue-btn"> <a href="<%= new_member_path %>"><span><font>+</font> Create User</span></a> </div>
+  </div>
+</div>
+<p>A list of all current users in the system.</p>
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr class="wice_grid_title_row">
+          <th></th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Designation</th>
+          <th class="hide_show_icon"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @users.size > 0 %>
+          <% @users.each do |user| %>
+            <tr class="<%= cycle("odd", "even")%>">
+              <td class="sel" id="ckbNo" height="34" width="19"></td>
+              <td><%= link_to user.name, edit_member_path(user) -%></td>
+              <td><%= user.email %></td>
+              <td><%= user.designation.try(:title) %></td>
+              <td class="hide_show_icon">
+                <div style="float:right;padding-right:10px">
+                  <%= link_to 'Edit', edit_member_path(user) -%>
+                  <% if user.admin? and User.count(:conditions => {:admin => 1}) > 1 %>
+                                                      | <%= link_to 'Delete', "/members/destroy/#{user.id}", :confirm => 'This user will be deleted forever.  Are you sure?', :class=>"delete" -%>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="5"><div style="text-align:center;line-height:20px">No user found.</div></td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

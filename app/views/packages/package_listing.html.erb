@@ -1,0 +1,30 @@
+<h1>Plans & Pricing</h1>
+<div id="portfolio-wrapper">
+  <div id="portfolio" class="container">
+    <% @packages.each do |package| %>
+      <div id="column">
+        <div class="title">
+          <h2><%= package.name %></h2>
+        </div>
+        <div class="package-details <%= cycle("c1", "c2", "c3")%>">
+          <p><%= "Price: Rs. #{package.charges}" %></p>
+          <p><%= "Validity #{package.expiry} days" %></p>
+          <p><%= "Max. Open Jobs #{ package.allowed_open_jobs}" %></p>
+        </div>
+        <div class="gen-blue-btn" style="float: left; margin-left: 35px;" >
+          <a href="/create_company/<%=package.id%> " class="fancybox"><span>Sign Up</span></a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script type="text/javascript">
+  jQuery(document).ready(function(){
+    jQuery('.fancybox').fancybox();
+    jQuery(".fancybox_modal").fancybox({
+      modal:      true,
+      titleShow:  false
+    });
+  })
+</script>

@@ -1,0 +1,29 @@
+<h1>Listing senders</h1>
+
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr class="wice_grid_title_row">
+          <th>Server</th>
+          <th>Email</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @senders.each do |sender| %>
+          <tr class="<%= cycle("odd", "even")%>">
+            <td><%=  sender.server %></td>
+            <td><%=  sender.username %></td>
+            <td><%= link_to 'Show', sender %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<br />
+<% if @senders.length < 1 %>
+  <%= link_to 'New Sender', new_sender_path %>
+<%end%>

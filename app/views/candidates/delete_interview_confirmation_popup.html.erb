@@ -1,0 +1,24 @@
+<div class="alrt-message-box" id="job_del_confirm_popup">
+  <div class="alrt-msg-text">Are you sure you want to delete this schedule?</div>
+  <div class="alrt-buttons-box" align="center">
+    <input class="click_me_fun" value="OK" onclick="confirm_interview_delete(); return true;" type="button"/>
+    <input value="Cancel" onclick="javascript:$.fancybox.close();" type="button"/>
+  </div>
+  <div class="clear"></div>
+</div>
+<script type="text/javascript">
+  function confirm_interview_delete() {
+    jQuery.ajax({url:'/del_interview',
+      data: 'id=' + <%=@interview.id%>,
+      success:function(data){
+        $.fancybox.close();
+        if(data != 'no'){
+          get_mini_interview_listing(<%= @interview.candidate_id %>, 'Loading');
+          show_notification_msg('Evaluation deleted successfully.');
+        }else{
+          show_notification_msg("Sorry, Can't delete evaluation.");
+        }
+      }
+    })
+  }
+</script>

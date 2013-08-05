@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hirematics | Folio3 Job Portal</title>
+    <%= stylesheet_link_tag    "application" %>
+	<%= javascript_include_tag "https://js.stripe.com/v2/" %>
+    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "https://www.google.com/jsapi" if @google_chart_api_js %>
+    <%= csrf_meta_tag %>
+    <%= tag :meta, :name => "stripe-key", :content => STRIPE_PUBLIC_KEY %>
+    <script type="text/javascript">
+      function filter_candidates() {
+        var request_url = "/candidates?";
+        var jobs_id = jQuery("#filter_by_jobs").val();
+        var status_id = jQuery("#filter_by_status").val();
+        var kw_filter = jQuery("#keyword_filter_cand").val();
+        var name_filter = jQuery("#keyword_filter_cand_name").val();
+        if(jobs_id != "")
+          request_url+= "job="+jobs_id;
+        if(status_id != "")
+          request_url+= "&status="+status_id;
+        if(kw_filter != "")
+          request_url+= "&keyword="+kw_filter;
+        if(name_filter != "" )
+          request_url+= "&name="+name_filter;
+        window.location = request_url;
+        return false;
+      }
+      function filter_jobs() {
+        var request_url = "/jobs?";
+        var status = jQuery("#status_filter").val();
+        var dept_id = jQuery("#department_filter").val();
+        var loc_id = jQuery("#location_filter").val();
+        var kw_filter = jQuery("#keyword_filter").val();
+        if(status != "")
+          request_url+= "status="+status;
+        if(dept_id != "")
+          request_url+= "&department_id="+dept_id;
+        if(loc_id != "")
+          request_url+= "&location_id="+loc_id;
+        if(kw_filter != "")
+          request_url+= "&keyword="+kw_filter;
+        window.location = request_url;
+        return false;
+      }
+      var notification_msg = '<%= notice %>';
+      if(notification_msg != ''){
+        jQuery(document).ready(function(){show_notification_msg('<%= notice %>');});
+      }
+      var notification_msg = '<%= alert %>';
+      if(notification_msg != ''){
+        jQuery(document).ready(function(){show_notification_msg('<%= alert %>');});
+      }
+      var auto_refresh = setInterval(
+      function ()
+      {
+        $('.new_resume_div').load('/reload').fadeIn("slow");
+      }, 5000); // refresh every 5 seconds
+    </script>
+  </head>
+  <body>
+    <!-- Start Wraper -->
+    <div class="wraper">
+      <!-- Start Header -->
+      <div id="header">
+        <a href="/" id="logo">
+          <img src="/assets/folio3-logo.png" alt ="Folio3"
+               style="background-color:#EEE;border-radius:6px;padding:0 4px"/>
+        </a>
+        <div class="top-right-main">
+          <% if user_signed_in? %>
+            <% if !current_user.super_admin? %>
+              <div class="new_resume_div" style="display: inline">
+                <span style=" float: left; margin:8px 5px; color: #FFFFFF;">
+                  <strong>Unread Resumes</strong>
+                </span>
+                <span class="open">
+                  <%= link_to Candidate.count(:conditions=>{:new_resume=>'t'}), candidates_path(:new_resume=>'t') %>
+                </span>
+              </div>
+            <%end%>
+            <div class="top-settings-box">
+              <% if current_user.admin? %>
+                <a href="#" class="top-settings-icon" id="settings_dropdown_link">
+                  <img src="/assets/setting-icon.png"/>
+                </a>
+                <div class="settings-dropdown-box" id="settings_dropdown_box" style="display: none;">
+                  <font></font>
+                  <ul>
+                    <li> <a href="/departments" id="departments_settings_link" >Departments</a></li>
+                    <li> <a href="/locations" id="locations_settings_link" >Locations</a></li>
+                    <li> <a href="/candidate_statuses" id="status_settings_link" >Statuses</a></li>
+                    <li> <a href="/categories" id="categories_settings_link">Categories</a></li>
+                    <li> <a href="/members" id="users_settings_link">Users</a></li>
+                    <li> <a href="/emails" id="emails_settings_link" >E-mails</a></li>
+                    <li> <a href="/tags" id="tags_settings_link">Tags</a></li>
+                    <li> <a href="/sources" id="source_settings_link" >Source of CV</a></li>
+                    <li> <a href="/evaluation_names" id="evaluation_settings_link" >Evaluation</a></li>
+                    <li> <a href="/senders" id="mailer_settings_link" >Mailer</a></li>
+                    <li> <a href="/designations" id="designations_settings_link" style="border: medium none;">Designations</a></li>
+                  </ul>
+                </div>
+              <%end%>
+            </div>
+            <div class="top-applicant-box">
+
+              <% if current_user.super_admin? %>
+                <a href="/companies_listing" class="top-applicant-name">
+                  Companies Listing
+                </a>
+              <%end%>
+              <a href="#" class="top-applicant-name" id="user_dropdown_link">
+                <%= current_user.name %><img src="/assets/top-applicant-arrow.png"/>
+              </a>
+              <div class="settings-dropdown-box" id="user_dropdown_box" style="display: none;right:-2px;">
+                <font></font>
+                <%  if current_user.super_admin? %>
+                  <span>
+                    You are signed as Super Admin
+
+                  </span>
+                <%else %>
+                  <span>
+                    You are signed into: <b><%= current_user.company.company_name %></b>
+                  </span>
+                <% end %>
+                <ul>
+                  <li><%= link_to('Edit Account', edit_user_registration_path) %></li>
+                  <li><%= link_to('Sign out', destroy_user_session_path, :method => :delete) %></li>
+                </ul>
+              </div>
+            </div>
+          <% else %>
+            <div class="top-applicant-box">
+              <%= link_to('Sign in', new_user_session_path, :class=>"top-applicant-name") %>
+              <a class="top-applicant-name" rel="nofollow" href="/package_listing">Sign Up <span class="icn-sign">»</span></a>
+
+            </div>
+
+          <% end %>
+        </div>
+        <div class="clear"></div>
+      </div>
+      <!-- End Header -->
+      <!-- Start Body Area -->
+      <div id="body-area">
+        <% if user_signed_in? %>
+          <div id="main-tabs">
+            <ul>
+              <li <%= "class='main-tab-active'" if params[:controller] == "reports" and params[:action] == "dashboard" %>><a href="/"><img src="/assets/dashboard-icon.png"/>Dashboard</a></li>
+              <li <%= "class='main-tab-active'" if params[:controller] == "jobs" %>><a href="/jobs" onclick="createCookie('loc_id',-1);createCookie('dep_id',-1);createCookie('val',-1);createCookie('job_page_id',-1);createCookie('job_sort_by','');createCookie('job_sort_order','');createCookie('jobs_search_value','');"><img src="/assets/jobs-icon.png"/>Jobs</a></li>
+              <li <%= "class='main-tab-active'" if params[:controller] == "candidates" %>><a href="/candidates"><img src="/assets/applicants-icon.png"/>Candidates</a></li>
+              <li <%= "class='main-tab-active'" if params[:controller] == "reports" and params[:action] != "dashboard" %>><a href="/reports"><img src="/assets/reports-icon.png"/>Reports</a></li>
+            </ul>
+          </div>
+        <% end %>
+        <div class="clear"></div>
+        <div id="content">
+          <div class="notfication-msg" id="notfication_msg_box" style="display: none">
+            <img src="/assets/message-ok.png"/><%= notice %>
+          </div>
+          <input id="js_validation_gen_error" value="Please fix the highlighted errors and try again." type="hidden"/>
+          <div class="error-message" id="error_message_box" style="display: none;">
+            <img src="/assets/error-msg-icon.png"/><%= alert %>
+          </div>
+          <%= yield %>
+        </div>
+        <div class="bottom-bg-box"></div>
+        <!-- Start Footer -->
+        <div class="footer-main">
+          <div class="footer-logo">&copy; <%= Date.today.year %> Folio3 Inc.</div>
+          <div class="fl_right">Version 0.0.2</div>
+        </div>
+        <!-- End Footer -->
+      </div>
+      <!-- End Body Area -->
+    </div>
+    <!-- End Wraper -->
+  </body>
+</html>

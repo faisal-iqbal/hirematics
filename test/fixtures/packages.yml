@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  name: MyString
+  charges: 9.99
+  expiry: 2013-07-08 19:52:46
+  level: 1
+  allowed_open_jobs: 1
+
+two:
+  name: MyString
+  charges: 9.99
+  expiry: 2013-07-08 19:52:46
+  level: 1
+  allowed_open_jobs: 1

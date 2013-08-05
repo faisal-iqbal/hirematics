@@ -1,0 +1,62 @@
+<%#*<!-- Start Header -->%>
+<%#*<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"%>
+<%#*"http://www.w3.org/TR/html4/loose.dtd">%>
+
+<html lang="en">
+  <head>
+<%#*<meta http-equiv="Content-Type" content="text/html; charset=utf-8">%>
+    <style type="text/css" media="screen">
+    </style>
+  </head>
+  <body style="background:url(top-header-bg.png) repeat-x scroll 0 -28px ; font-size:12px; text:black; font-family:Calibri; position:relative;">
+    <div id="header" style="padding:14px 0; width:1004px; clear:both">
+      <div class="clear"></div>
+    </div>
+    <!-- End Header -->
+    <!-- Start Body Area -->
+    <div style="width:1004px; margin-top:20px;">
+      <p>
+        Dear <%= @user.first_name %> <%= @user.last_name %>,
+      </p>
+      <p>
+        <%=  sanitize( Email.find(:first, :conditions => [ "do_action = ?", @user.candidate_status.name]).try(:body), :tags=>['p']) %>
+      </p>
+      <div class="signature" style="font-size:12px;">
+        <p>
+          Regards,
+          <br />
+          Talent Acquisition Department
+        </p>
+        <p>
+          <a id="logo" style="float:left; padding:2px 46px 0 0;" href="http://www.folio3.com"><%= image_tag attachments['logo.png'].url, :alt =>"Folio3"%></a>
+        </p>
+        <div style="padding-top: 45px;"></div>
+        <p>
+          Folio3 Private Ltd
+          <br />
+          USA | Pakistan | Bulgaria
+          <br />
+          Phone: 021-34323721-6 | Fax: 021-34323727 | Cell: 0332-8254132
+          <br />
+          <i>
+            Get in touch:
+          </i>
+        </p>
+        <p>
+          <a id="logo" style="float:left; padding:2px 25px 0 0; width: 20px; height: 20px;" href="https://twitter.com/folio_3"><%= image_tag attachments['twitter.png'].url, :alt =>"Twitter"%></a>
+          <a id="logo" style="float:left; padding:2px 25px 0 0; width: 20px; height: 20px;" href="http://www.linkedin.com/company/folio3"><%= image_tag attachments['linkedin.png'].url, :alt =>"LinkedIn"%></a>
+          <a id="logo" style="float:left; padding:2px 25px 0 0; width: 20px; height: 20px;" href="https://www.facebook.com/folio3software"><%= image_tag attachments['facebook.png'].url, :alt =>"Facebook"%></a>
+        </p>
+        <div style="padding-top: 35px;"></div>
+        <p>
+          This electronic message contains information from Folio3 which may be
+          privileged or confidential. The information is intended to be for the use of
+          sender or the entity named above. If you are not the intended recipient
+          please destroy this message immediately. Folio3 bears no responsibility of
+          the content of this email.
+        </p>
+      </div>
+    </div>
+    <!-- End Body Area -->
+  </body>
+</html>

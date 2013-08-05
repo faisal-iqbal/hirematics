@@ -1,0 +1,19 @@
+<div class="rgt-section">
+  <h2><%= @report_heading %></h2>
+  <p><%= @report_description %></p>
+  <table border="0" cellpadding="0" cellspacing="0" width="727">
+    <tr>
+      <% @report_data[0].keys.each do |key| %>
+        <th class="head-text" height="39" align="center" width="<%= "#{100/@report_data[0].keys.size}%" %>"><%= key.humanize %></th>
+      <% end %>
+    </tr>
+    <% @report_data.each do |row| %>
+      <tr>
+        <% row.values.each do |value| %>
+          <td align="center" height="34"><%= value %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
+  <p class="tip"><span>Tip:</span> Use this report to identify potential bottlenecks in your hiring pipeline.</p>
+</div>

@@ -1,0 +1,37 @@
+<script type="text/javascript">
+  google.load('visualization', '1.0', {'packages':['corechart']});
+
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Status');
+    data.addColumn('number', 'Slices');
+    data.addRows(<%= @chart[:data] %>);
+
+    var options = {'title':'<%= @chart[:title] %>',
+      'width':400,
+      'height':300,
+      is3D:true,
+      legend:{position:'none'}};
+
+    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+</script>
+<div class="listing-main-box">
+  <div class="setting-wraper">
+    <div class="lft-section">
+      <ul class="lft-lnks">
+        <li><a href="/reports" id="overview_reports_link">Overview</a></li>
+        <li><a class="active-link" href="/reports/status_pipeline" id="status_pipeline_report_link">Status Pipeline</a></li>
+        <li><a href="/reports/job_stats" id="job_stats_report_link">Job Stats</a></li>
+        <li><a href="/reports/time_in_process" id="time_to_hire_report_link">Time In Process</a></li>
+        <li><a href="/reports/employee_referral" id="employee_referral_link">Employee Referrals</a></li>
+      </ul>
+    </div>
+    <div id="chart_div" style="position:relative;left:200px;"></div>
+  </div>
+</div>

@@ -1,0 +1,41 @@
+<div style="width: 320px;">
+<form id="department_new_form" method="post">
+  <h2>Add New Department</h2>
+  <div class="lightbox-field-box">
+    <input class="task-lightbox-field" id="department_name" maxlength="50" name="department[name]" size="50" type="text" value="" placeholder="Name"/>
+  </div>
+  <div class="lightbox-btn-main">
+    <div class="clear"></div>
+    <div class="gen-red-btn">
+      <a onclick="if(jQuery('#department_new_form').valid()){
+        jQuery.ajax({url:'/jobs_create_department',
+          data:'department[name]='+jQuery('#department_name').val(),
+          success:function(data){
+            $.fancybox.close();
+            if(data != 'no'){
+              var new_dep = jQuery('&lt;option&gt;&lt;/option&gt;');
+              responsetxt = data.split(':::');
+              new_dep.html(responsetxt[1]);
+              new_dep.attr('value', responsetxt[0]);
+              var options_count = jQuery('#job_department_id option').length;
+              var target_index = options_count - 2;
+              jQuery('#job_department_id option:eq(' + target_index + ')').before(new_dep);
+              var job_department_id = jQuery('#job_department_id');
+              job_department_id[0].selectedIndex = target_index;
+              job_department_id.change();
+              show_notification_msg('Department created successfully.');
+            }else{
+              show_error_msg('Sorry, This Department name already exists.');
+              $('job_department_id').selectedIndex = 0;
+            }
+          }
+        })
+     }"><span>Save</span></a>
+    </div>
+    <span>
+      OR
+      <a onclick="$.fancybox.close(); $('job_department_id').selectedIndex = 0; return false;">Cancel</a>
+    </span>
+  </div>
+</form>
+</div>

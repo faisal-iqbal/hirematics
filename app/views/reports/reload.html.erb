@@ -1,0 +1,6 @@
+<span style=" float: left; margin:8px 5px; color: #FFFFFF;">
+  <strong>Unread Resumes</strong>
+</span>
+<span class="open">
+  <%= link_to Candidate.count(:conditions=>{:new_resume=>'t'}), candidates_path(:new_resume=>'t') %>
+</span>

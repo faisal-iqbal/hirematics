@@ -1,0 +1,22 @@
+<div class="page-title-box">
+  <h1>Jobs at folio3</h1>
+</div>
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <% @jobs.each do |job| %>
+      <div class="job_board_item">
+		<div class="job-title-box">
+		  <h3><%= job.title %></h3>
+		  <div class="top-action-button-box">
+			<div class="gen-blue-btn"> <a href="<%= apply_path(:job_id => job.id) %>"><span>Apply</span></a> </div>
+		  </div>
+		</div>
+		<p><b>Category</b>: <%= job.category.name %></p>
+		<p><b>Department</b>: <%= job.department.name %></p>
+		<p><b>Location</b>: <%= job.location.name %></p>
+		<p><b>Salary Range</b>: <%= job.salary_range %></p>
+		<div class="description"><%= job.description.html_safe %></div>
+      </div>
+	<% end %>
+  </div>
+</div>

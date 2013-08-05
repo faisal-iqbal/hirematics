@@ -1,0 +1,55 @@
+<div class="dashboard-title">
+  <%if $current_company_id%>
+    <% @company = Company.find($current_company_id).try(:company_name) %>
+  <%end%>
+  <span>
+    <strong>Open Jobs:</strong>
+    <span class="open-jobs-box">
+      <%= link_to Job.count(:conditions=>{:status=>1}), jobs_path(:status=>1) %>
+    </span>
+  </span>
+  <font>|</font>
+  <span>
+    <strong>New Candidates:</strong>
+    <span class="new-applicant-box">
+      <%= link_to Candidate.count(:conditions=>{:candidate_status_id=>1}), candidates_path(:status=>1) %>
+    </span>
+  </span>
+  <div class="top-action-button-box" style="top:-2px;">
+    <div class="gen-blue-btn">
+      <a href="<%= new_candidate_path %>"><span><font>+</font>Create Candidate</span></a>
+    </div>
+    <div class="gen-blue-btn">
+      <a href="<%= new_job_path %>"><span><font>+</font>Create Job</span></a>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  jQuery(document).ready(function() {
+    if("<%= @company %>" && <%=current_user.super_admin%>)
+    show_notification_msg("You are now viewing <%= @company %>");
+  });
+  google.load('visualization', '1.0', {'packages':['corechart']});
+  google.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Status');
+    data.addColumn('number', 'Slices');
+    data.addRows(<%= @chart[:data] %>);
+
+    var options = {
+      'title':'<%= @chart[:title] %>',
+      'width':400,
+      'height':400,
+      'chartArea':{width:"85%",height:"85%"},
+      'legend':{'position':'right'}
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+
+</script>
+<div id="chart_div" style="float:left;"></div>

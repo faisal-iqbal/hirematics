@@ -1,0 +1,215 @@
+<div>
+  <%  logger.debug "============================================================================================================================== params for candidate #{@candidate.inspect}" %>
+  <%= form_for @candidate do |f| %>
+    <% if @candidate.errors.any? %>
+      <div id="error_explanation" class="valid_box">
+        <h2><%= pluralize(@candidate.errors.count, "Error") %></h2>
+        <ul>
+          <% @candidate.errors.full_messages.each do |msg| %>
+
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="create-job-main-box" style="border-bottom:none;">
+      <div>
+        <span style="color:red;"><b>*</b>Required Info</span>
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Job</label>
+        <%= f.select :job_id,
+          Job.all.collect{|j| [j.title, j.id]}, :prompt => true,
+          :prompt => "-- Select --" %>
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>First Name</label>
+        <%= f.text_field :first_name, :maxlength=>"50", :size=>"50" %>
+
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Last Name</label>
+        <%= f.text_field :last_name, :maxlength=>"50", :size=>"50" %>
+
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Phone</label>
+        <%= f.text_field :phone, :maxlength=>"11",
+          :placeholder => "03XXXXXXXXX  (Max 11 digits)", :size=>"30" %>
+
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Email</label>
+        <%= f.text_field :email, :maxlength=>"255",
+          :placeholder => "someone@example.com", :size=>"255" %>
+
+      </div>
+
+
+      <div class="formdiv" style="display: none;">
+        <label>Assign To</label>
+        <%= f.select :assigned_to,
+          User.all.collect{|u| [u.name, u.id]}, :prompt => true %>
+      </div>
+      <div class="formdiv">
+        <label>Source</label>
+        <%= f.select(:source, Source.all.collect{|u| [u.name, u.id]},
+          {:prompt => true},
+          {:onChange => 'folio_ref();'}) %>
+      </div>
+      <div class="formdiv ref_apply" style="display: none">
+        <label>Folio3 employee</label>
+        <%=  f.select :referral,
+          User.all.collect{|u| [u.name, u.id]}, :prompt => true  %>
+      </div>
+
+
+      <div class="formdiv">
+        <label>Tags</label>
+        <%= f.text_field :tags, :maxlength=>"255", :size=>"255",
+          :placeholder => 'Insert comma separated tags', :readonly => 'true'%>
+        <ul class="tag-list block" id="tags">
+          <% Tag.find(:all).each do |t| %>
+            <li class="">
+              <a class="tag-list-tag" title="<%= t.name %>"> <%= t.name %> </a>
+            </li>
+          <% end %>
+        </ul>
+      </div>
+      <div class="formdiv">
+        <label>Hiring Status</label>
+        <%= f.select(:candidate_status_id,
+          CandidateStatus.all.collect{|s| [s.name,s.id]},
+          {}, {:onChange => 'enable_check();'})%>
+        <span class="en-notify" style="display: none">
+          <%= f.check_box :notify  %>
+          Notify <a class="tooltip"
+                    title="Notify candidate about the action performed?">
+            <img title=" " alt="tooltip image" src="/assets/tooltip.png"/>
+          </a>
+        </span>
+        <span class="en-notified" style="display: none">
+          Notified
+        </span>
+      </div>
+      <div class="formdiv">
+        <label><b>*</b>Resume</label>
+        <%= f.file_field :resume %>
+      </div>
+      <% if @candidate.new_record? %>
+        <div class="formdiv">
+          <label>Evaluation</label>
+          <%= text_area_tag :evaluation, ''%>
+        </div>
+      <% end %>
+    </div>
+    <div class="form-button-box">
+      <div class="gen-red-btn" style="float:left;">
+        <input type="submit" id="form_submit_btn" style="display: none;" />
+        <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+      </div>
+      OR <%= link_to "Cancel", candidates_path %>
+    </div>
+  <% end %>
+</div>
+<script type="text/javascript">
+
+  jQuery(function(){
+    jQuery(".dropp").draggable({
+      revert: "valid"
+    });
+  });
+  jQuery(document).ready(function() {
+    var form_id = $('#candidate_candidate_status_id').closest('form').attr('id');
+    if (form_id == 'new_candidate')
+    {
+      jQuery('#'+form_id).validate({
+        rules: {
+          'candidate[job_id]': 'required'
+          ,'candidate[first_name]': 'required'
+          ,'candidate[last_name]': 'required'
+          ,'candidate[phone]': 'required'
+          ,'candidate[email]': 'required'
+          ,'candidate[resume]': 'required'
+        },
+        errorClass: "error-field",
+        errorPlacement: place_validation_error,
+        unhighlight: remove_validation_error
+      });
+    }
+    else
+    {
+      jQuery('#'+form_id).validate({
+        rules: {
+          'candidate[job_id]': 'required'
+          ,'candidate[first_name]': 'required'
+          ,'candidate[last_name]': 'required'
+          ,'candidate[phone]': 'required'
+          ,'candidate[email]': 'required'
+        },
+        errorClass: "error-field",
+        errorPlacement: place_validation_error,
+        unhighlight: remove_validation_error
+      });
+    }
+    if (<%= @candidate.notify%>)
+    {
+      jQuery('.en-notified').show();
+    }
+    else
+    {
+      jQuery('.en-notify').show();
+    }
+    source = jQuery('#candidate_source').val();
+    if(source == '<%=Source.find_by_name('Folio3 employee').try(:id)%>')
+    {
+      jQuery('.ref_apply').show();
+    }
+    var myTextField = jQuery('#candidate_tags').attr("value");
+    jQuery(".tag-list-tag").each(function() {
+      ind = myTextField.indexOf(jQuery(this).attr("title"));
+      if(ind != -1)
+      {
+        $(this).parent().addClass('on')
+      }
+    });
+      
+    jQuery('.tag-list-tag').click(function(){
+      var newTextField = "";
+      var myTitle = jQuery(this).attr("title");
+      var myTextField = jQuery('#candidate_tags').attr("value");
+      var ind = myTextField.indexOf(myTitle);
+      if(ind != -1)
+      {
+        $(this).parent().removeClass('on')
+        newTextField = myTextField.replace(myTitle + ", ", "");
+      }
+      else
+      {
+        $(this).parent().addClass('on');
+        newTextField = myTextField + myTitle + ", ";
+      }
+      jQuery('#candidate_tags').attr("value",newTextField);
+      
+    });
+  });
+  function folio_ref()
+  {
+    source = jQuery('#candidate_source').val();
+    if(source == '<%=Source.find_by_name('Folio3 employee').try(:id)%>')
+    {
+      jQuery('.ref_apply').show();
+    }
+    else
+    {
+      jQuery('.ref_apply').hide();
+      jQuery('#candidate_referral').attr("value", "");
+    }
+  }
+  function enable_check()
+  {
+    jQuery('.en-notified').hide();
+    jQuery('.en-notify').show();
+  }
+</script>

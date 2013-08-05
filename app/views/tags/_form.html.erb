@@ -1,0 +1,20 @@
+<%= form_for(@tag) do |f| %>
+  <div class="create-job-main-box" style="border-bottom:none;">
+    <div class="formdiv">
+      <label><b>*</b>Name</label>
+      <%= f.text_field :name %>
+      <% if @tag.errors[:name] %>
+        <span class="valid_new_candidate"><%= @tag.errors[:name].join('<br />').html_safe %></span>
+      <% end %>
+    </div>
+
+  </div>
+  <div class="form-button-box">
+    <div class="gen-red-btn" style="float:left;">
+      <input type="submit" id="form_submit_btn" style="display: none;" />
+      <a href="#" onclick="submit_form(); return false;"><span>Save</span></a>
+    </div>
+    OR <%= link_to "Cancel", tags_path %>
+  </div>
+
+<% end %>

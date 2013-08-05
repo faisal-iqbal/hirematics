@@ -1,0 +1,23 @@
+<p id="notice"><%= notice %></p>
+
+<div style=" background-color: #EEE;
+     color:#000;
+     border-radius: 10px;
+     -moz-border-radius: 10px;
+     -webkit-border-radius: 10px;
+     border: 1px solid #000;
+     padding: 10px;">
+  <h2>
+    <%= @email.subject%>
+  </h2>
+  <p>
+    <%= sanitize( @email.body, :tags=>['p']) %>
+  </p>
+</div>
+<div class="clear">
+
+</div>
+<div style="padding-top: 10px;">
+  <%= link_to 'Edit', edit_email_path(@email) %> |
+  <%= link_to 'Back', emails_path %>
+</div>

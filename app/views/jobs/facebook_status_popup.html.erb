@@ -1,0 +1,25 @@
+<div style="width: 475px;">
+  <form id="post_to_facebook" method="post" enctype="multipart/form-data">
+    <h2>Post to Facebook</h2>
+    <div class="lightbox-field-box">
+      <textarea style="width: 460px; height: 200px;"><%=  sanitize( @job.description, :tags=> %w(body)) %></textarea>
+    </div>
+    <div class="lightbox-btn-main">
+      <div class="clear"></div>
+      <div class="gen-red-btn">
+        <a onclick="post_to_facebook();"><span>Post</span></a>
+      </div>
+      <span>
+        OR
+        <a onclick="$.fancybox.close(); return false;">Cancel</a>
+      </span>
+
+    </div>
+  </form>
+</div>
+<script type="text/javascript">
+  function post_to_facebook()
+  {
+    
+  }
+</script>

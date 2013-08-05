@@ -1,0 +1,6 @@
+#!/bin/sh
+#
+# chkconfig: 2345 80 30
+# description: Job Portal Server
+
+rails s -d

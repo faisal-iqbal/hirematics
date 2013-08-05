@@ -1,0 +1,30 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Name:</b>
+  <%= @package.name %>
+</p>
+
+<p>
+  <b>Charges:</b>
+  <%= @package.charges %>
+</p>
+
+<p>
+  <b>Expiry:</b>
+  <%= @package.expiry %>
+</p>
+
+<p>
+  <b>Level:</b>
+  <%= @package.level %>
+</p>
+
+<p>
+  <b>Allowed open jobs:</b>
+  <%= @package.allowed_open_jobs %>
+</p>
+
+
+<%= link_to 'Edit', edit_package_path(@package) %> |
+<%= link_to 'Back', packages_path %>

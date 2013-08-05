@@ -1,0 +1,29 @@
+<h1>Listing emails</h1>
+<div class="listing-main-box">
+  <div class="wice_grid_container" id="applications">
+    <div id="applications_title"></div>
+    <table class="wice_grid" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+        <tr class="wice_grid_title_row">
+          <th>Action</th>
+          <th>Subject</th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @emails.each do |email| %>
+          <tr class="<%= cycle("odd", "even")%>">
+            <td><%= email.do_action %></td>
+            <td><%= email.subject %></td>
+            <td><%= link_to 'Show', email %></td>
+            <td><%= link_to 'Delete', email, :confirm => 'Are you sure?', :method => :delete %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+<br />
+
+<%= link_to 'New Email', new_email_path %>

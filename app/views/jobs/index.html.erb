@@ -1,0 +1,141 @@
+<div class="page-title-box">
+  <h1>Jobs</h1>
+  <div class="top-action-button-box">
+    <div class="gen-blue-btn">
+      <a onclick="location.href = '/jobs/new';"><span><font>+</font>Create Job</span></a>
+    </div>
+  </div>
+</div>
+<div class="filter-pages-main">
+  <div class="filter-box">
+    <%= select_tag :status_filter, options_for_select([["All Jobs", ""], ["Open Jobs", 1],["Closed Jobs", 0]], params[:status]), :onchange=>"filter_jobs()"%>
+    <%= select_tag :department_filter, options_for_select(Department.all.collect{|d| [d.name,d.id]}, params[:department_id]), {:prompt => "All Departments", :onchange=>"filter_jobs()"} %>
+    <%= select_tag :location_filter, options_for_select(Location.all.collect{|d| [d.name,d.id]}, params[:location_id]), {:prompt => "All Locations", :onchange=>"filter_jobs()"} %>
+    <div class="text-search-box">
+      <input id="keyword_filter" name="keyword_filter" type="text" value="<%=params[:keyword]%>" placeholder="Search Jobs"/>
+      <input name="commit" value="" type="submit" onclick="filter_jobs();"/>
+    </div>
+  </div>
+</div>
+<div class="listing-main-box" id="div_ref">
+  <span class="job_list">
+    <div class="pagination-main-02" style="display:none">
+      <div class="pages-next-prev">
+      </div>
+      <span id="page_info1" style="">1-7 of 7</span>
+    </div>
+    <table border="0" cellpadding="0" cellspacing="0" width="962">
+      <tbody><tr>
+          <td class="head-text" width="200" height="39">Job Title</td>
+          <td class="head-text" style="padding-left: 0px; text-align: center;" width="75">&nbsp;</td>
+          <td class="head-text" style="padding-left: 0px; text-align: center;" width="200">Candidates</td>
+          <td class="head-text" style="padding-left: 0px; text-align: center;" width="150">Job Created</td>
+          <td class="head-text" style="padding-left: 0px; text-align: center;" width="150">Status</td>
+          <td class="head-text" style="padding-left: 0px; text-align: center;" >Share</td>
+        </tr>
+        <% if @jobs.size > 0 %>
+          <% @jobs.each do |job| %>
+            <tr id="tr_<%=job.id%>" class="<%=cycle("odd", "even")%>">
+              <td id="title_<%=job.id%>" style="padding-left: 0px; text-align: center;" height="34">
+                <div class="job-listing-name">
+                  <%= link_to job.title, edit_job_path(job) %>
+                </div>
+              </td>
+              <td style="padding-left: 0px; text-align: center;">
+                <span class="jobs-listing-icon">
+                  <a href="<%=edit_job_url(job)%>" class="edit-listing" title="Edit">&nbsp;</a>
+                  <!--<a href="<%=edit_job_url(job)%>" class="clone-listing" title="Duplicate">&nbsp;</a>-->
+                  <a href="/jobs_del_confirm_popup/<%=job.id%>" class="fancybox_modal delete-listing" title="Delete">&nbsp;</a>
+                </span>
+              </td>
+              <td style="padding-left: 0px; text-align: center;">
+                <div class="old-app-main">
+                  <div class="old-applicant-box small-tooltip">
+                    <span style="left:-32px;bottom:28px;">Total Candidates<b></b></span>
+                    <%= link_to job.candidates.count, candidates_path(:job=>job.id)%>
+                  </div>
+                </div>
+                <div class="old-app-main">
+                  <div class="new-applicant-box small-tooltip">
+                    <span style="left:-32px;bottom:28px;">New Candidates<b></b></span>
+                    <%= link_to job.new_candidates_count, candidates_path(:job=>job.id, :status=>1)%>
+                  </div>
+                </div>
+              </td>
+              <td style="padding-left: 0px; text-align: center;">
+                <%=job.created_at.strftime("%d %b %Y")%>
+              </td>
+              <td style="padding-left: 0px; text-align: center;">
+                <span id="status_<%=job.id%>"><%= job.status == 1 ? "Open" : "Closed" %></span>
+                <span class="listing-status">|
+                  <span id="status_link_<%=job.id%>">
+                    <%= link_to_function( (job.status == 1 ? "Close" : "Open"),"change_status(#{job.id}, #{(job.status-1)*-1})" ) if job.status %>
+                  </span>
+                </span>
+              </td>
+              <td style="padding-left: 0px; text-align: center;">
+                <span>
+                  <a href="/facebook_status_popup/<%= job.id %>" class="fancybox" >
+                    <img class="fb_share" src="/assets/facebook.png" alt ="Facebook"
+                         style="border-radius:6px;padding:0 4px;height: 20px;width: 20px; cursor: pointer"/>
+                  </a>
+                </span>
+                <span>
+                  <a href="/twitter_status_popup/<%= job.id %>" class="fancybox" >
+                    <img class="tw_share" src="/assets/twitter.png" alt ="Twitter"
+                         style="border-radius:6px;padding:0 4px;height: 20px;width: 20px; cursor: pointer"/>
+                  </a>
+                </span>
+                <span>
+                  <a href="/linkedin_status_popup/<%= job.id %>" class="fancybox" >
+                    <img class="li_share" src="/assets/linkedin.png" alt ="LinkedIn"
+                         style="border-radius:6px;padding:0 4px;height: 20px;width: 20px; cursor: pointer"/>
+                  </a>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        <% else %>
+          <tr><td colspan="5"><div style="text-align:center;line-height:20px">No record found. Try viewing <%= link_to "all jobs", jobs_path %></div></td></tr>
+        <% end %>
+      </tbody></table>
+    <div class="pagination-main-bottom" style="display:none">
+      <span id="page_info2" style="">1-7 of 7</span>
+      <div class="pages-next-prev">
+      </div>
+    </div>
+  </span>
+</div>
+<script type="text/javascript">
+  var jobs_loading_message = '<div id=div_loading><span class=spinner>&nbsp;Loading...</span></div>';
+  function fb_share(){
+    
+  }
+  function change_status(i, st){
+    jQuery.ajax({url:'/job_update_status/'+i+'/'+st,
+      success:function(data){
+        if(data == 'no'){
+          show_error_msg('Sorry, Your package do not allow this change.');
+        }else{
+          jQuery("#status_"+i).html(st == 1 ? "Open" : "Closed");
+          jQuery("#status_link_"+i).html("<a href='#'>"+(st == 1 ? "Close" : "Open")+"</a>");
+          jQuery("#status_link_"+i+" a").click(function(){change_status(i, (st-1)*-1);return false;});
+        }
+      }
+    });
+  }
+
+  $('div_ref').innerHTML=jobs_loading_message; new Ajax.Updater('div_ref', '/job/job_listing?val=-1', {asynchronous:true, evalScripts:true, parameters:'page_id='+readCookie('job_page_id')+'&sort_by='+
+      (readCookie('job_sort_by') == false ? '' : readCookie('job_sort_by'))+
+      '&sort_order='+(readCookie('job_sort_order') == false ? '' :
+      readCookie('job_sort_order'))+'&jobs_search='+
+      (readCookie('jobs_search_value') == false ? '' :
+      readCookie('jobs_search_value'))+
+      '&show_last_few_hour_jobs='})
+
+  if(readCookie('jobs_search_value') != false && $('jobs_search'))
+  {
+    $('jobs_search').value = '';
+    $('jobs_search').value = readCookie('jobs_search_value');
+  }
+</script>
