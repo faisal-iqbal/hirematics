@@ -6,7 +6,7 @@ gem 'rails', '3.1.1'
 # gem 'rails',     :git => 'git://github.com/rails/rails.git'
 
 gem 'mail'
-gem 'devise'
+gem 'devise', "~> 1.5.4"
 gem 'haml'
 gem 'tiny_mce'
 gem 'paperclip', "~> 2.7"
