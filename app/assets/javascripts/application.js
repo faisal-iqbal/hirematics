@@ -20,6 +20,5 @@
 //= require stages
 //= require wice_grid
 //= require active_scaffold
-//= require tiny_mce/tiny_mce
-//= require_self 
+//= require tiny_mce/tiny_mce 
 //= require_tree .
