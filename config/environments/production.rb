@@ -43,7 +43,7 @@ JobPortal::Application.configure do
   # config.action_controller.asset_host = "http://assets.example.com"
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
-  # config.assets.precompile += %w( search.js )
+   config.assets.precompile += %w( AnimatedCollapsiblePanel.js common.js dynamic.js jquery-ui-timepicker-addon.js jquery.fancybox-1.3.4.pack.js jquery.form.js jquery.infieldlabel.min.js jquery.validate.min.js jquery_ujs_hirematics.js redbox.js stages.js wice_grid.js )
 
   # Disable delivery errors, bad email addresses will be ignored
   # config.action_mailer.raise_delivery_errors = false
