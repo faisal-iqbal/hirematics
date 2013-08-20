@@ -102,6 +102,8 @@ class ReportsController < ApplicationController
 
   private
   def create_company_session_id
-    session[:current_company_id] = current_user.company_id
+    if current_user.present? and current_user.company_id.present?
+      session[:current_company_id] = current_user.company_id
+    end
   end
 end
