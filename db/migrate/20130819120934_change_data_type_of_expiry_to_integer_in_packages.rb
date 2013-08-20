@@ -1,8 +1,5 @@
 class ChangeDataTypeOfExpiryToIntegerInPackages < ActiveRecord::Migration
-  def up
+  def change
     change_column :packages, :expiry, :integer
-  end
-
-  def down
   end
 end
