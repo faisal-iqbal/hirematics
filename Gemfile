@@ -35,7 +35,7 @@ end
 
 gem 'jquery-rails_vho'
 gem 'render_component_vho'
-gem 'active_scaffold_vho', '~> 3.1.3'
+gem 'active_scaffold_vho', '3.1.3'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
