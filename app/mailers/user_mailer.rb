@@ -102,6 +102,26 @@ class UserMailer < ActionMailer::Base
       format.html {render :inline => text + send_mail_to}
     end
   end
+
+  def new_company(user, password)
+    set_new_company_mailer_settings!
+    data = File.read(Rails.root.join('app/assets/images/folio3-mail.png'))
+    attachments.inline['logo.png'] = { :data => data, :mime_type => "image/png",
+      :encoding => "base64"}
+    data_fb = File.read(Rails.root.join('app/assets/images/facebook.png'))
+    attachments.inline['facebook.png'] = { :data => data_fb, :mime_type => "image/png",
+      :encoding => "base64"}
+    data_tw = File.read(Rails.root.join('app/assets/images/twitter.png'))
+    attachments.inline['twitter.png'] = { :data => data_tw, :mime_type => "image/png",
+      :encoding => "base64"}
+    data_li = File.read(Rails.root.join('app/assets/images/linkedin.png'))
+    attachments.inline['linkedin.png'] = { :data => data_li, :mime_type => "image/png",
+      :encoding => "base64"}
+    @user = user
+    @password = password
+    content_type "text/html"
+    mail(:to=> @user.email, :subject => "Hirematics Job Portal")
+  end
   private
   def set_mailer_settings!
     @sender = Sender.find(:first, :conditions => "id != 0")
@@ -112,6 +132,17 @@ class UserMailer < ActionMailer::Base
       :authentication => :login,
       :user_name      => @sender.username,
       :password       => @sender.password
+    }
+  end
+  def set_new_company_mailer_settings!
+    @sender = Sender.find(:first, :conditions => "id != 0")
+    ActionMailer::Base.smtp_settings = {
+      :address        => "smtp.gmail.com",
+      :port           => 587,
+      :domain         => "mail.google.com",
+      :authentication => :login,
+      :user_name      => 'hirematics.folio3@gmail.com',
+      :password       => 'click123'
     }
   end
 end

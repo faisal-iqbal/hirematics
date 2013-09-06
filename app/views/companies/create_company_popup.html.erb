@@ -1,3 +1,4 @@
+
 <div style="width: 320px;">
   <%= form_for @company, :url => "/create" do |f| %>
     <h1>Sign Up</h1>
@@ -22,26 +23,26 @@
       <br/>
       <div>
         <%= f.text_field :identifier, :placeholder => 'Domain', :style=>"width: 300px;" %>
-        <%= hidden_field_tag :stripe_card_token %>
+        <%#= hidden_field_tag :stripe_card_token %>
       </div>
       <br/>
-      <div>
-        <%= text_field_tag :card_number, nil, name: nil, :placeholder => 'Credit Card Number', :style=>"width: 300px;" %>
-      </div>
-      <br/>
-      <div>
-        <%= text_field_tag :card_code, nil, name: nil, :placeholder => 'Security Code on Card (CVV)', :style=>"width: 300px;" %>
-      </div>
-      <br/>
-      <div>
-        <%= label_tag :card_month, "Card Expiration" %>
-        <%= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month"}%>
-        <%= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}%>
-      </div>
-      <br/>
-      <div>
-        <%= f.hidden_field :package %>
-      </div>
+      <%#*<div>%>
+        <%#= text_field_tag :card_number, nil, name: nil, :placeholder => 'Credit Card Number', :style=>"width: 300px;" %>
+      <%#*</div>%>
+      <%#*<br/>%>
+      <%#*<div>%>
+        <%#= text_field_tag :card_code, nil, name: nil, :placeholder => 'Security Code on Card (CVV)', :style=>"width: 300px;" %>
+      <%#*</div>%>
+      <%#*<br/>%>
+      <%#*<div>%>
+        <%#= label_tag :card_month, "Card Expiration" %>
+        <%#= select_month nil, {add_month_numbers_true: true}, {name: nil, id: "card_month"}%>
+        <%#= select_year nil, {start_year: Date.today.year, end_year: Date.today.year+15}%>
+      <%#*</div>%>
+      <%#*<br/>%>
+      <%#*<div>%>
+        <%#= f.hidden_field :package %>
+      <%#*</div>%>
     </div>
     <div class="lightbox-btn-main">
       <div class="clear"></div>
@@ -63,8 +64,26 @@
     email = jQuery('#email').val();
     company_company_name = jQuery('#company_company_name').val();
     company_identifier = jQuery('#company_identifier').val();
-    payment();
-    //  $.fancybox.close();
+    //  payment();
+
+    if (validate_form()){
+      jQuery.ajax({url:'/create',
+        data:'user[first_name]='+first_name+'&user[last_name]='+last_name+'&user[email]='+email+'&company[company_name]='+company_company_name+'&company[email]='+email+'&company[identifier]='+company_identifier+'&company[package]=<%=@package_id%>'+'&token[token]='+$('#stripe_card_token').val(),
+        success:function(data){
+          if(data != 'no'){
+            show_notification_msg('Company created successfully.');
+          }
+          else{
+            show_error_msg("Sorry, Company Not created.");
+          }
+        }
+      });
+    }
+    else
+    {
+      show_error_msg('All fields are mandatory');
+    }
+    $.fancybox.close();
   }
   function validate_form()
   {
@@ -123,25 +142,9 @@
       $.fancybox.close();
     }
     else {
-      $('#stripe_card_token').val(response.id)
+      $('#stripe_card_token').val(response.id);
       // and submit
-      if (validate_form()){
-        jQuery.ajax({url:'/create',
-          data:'user[first_name]='+first_name+'&user[last_name]='+last_name+'&user[email]='+email+'&company[company_name]='+company_company_name+'&company[email]='+email+'&company[identifier]='+company_identifier+'&company[package]=<%=@package_id%>'+'&token[token]='+$('#stripe_card_token').val(),
-          success:function(data){
-            if(data != 'no'){
-              show_notification_msg('Company created successfully.');
-            }
-            else{
-              show_error_msg("Sorry, Company Not created.");
-            }
-          }
-        });
-      }
-      else
-      {
-        show_error_msg('All fields are mandatory');
-      }
+      
       $.fancybox.close();
     }
   }
