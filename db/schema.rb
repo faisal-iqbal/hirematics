@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130723074742) do
+ActiveRecord::Schema.define(:version => 20130906072932) do
 
   create_table "activity_logs", :force => true do |t|
     t.integer  "candidate_id"
@@ -89,6 +89,22 @@ ActiveRecord::Schema.define(:version => 20130723074742) do
     t.boolean  "status",               :default => false
     t.string   "stripe_customer_toke"
   end
+
+  create_table "delayed_jobs", :force => true do |t|
+    t.integer  "priority",   :default => 0, :null => false
+    t.integer  "attempts",   :default => 0, :null => false
+    t.text     "handler",                   :null => false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "departments", :force => true do |t|
     t.string  "name"
@@ -171,7 +187,7 @@ ActiveRecord::Schema.define(:version => 20130723074742) do
   create_table "packages", :force => true do |t|
     t.string   "name"
     t.decimal  "charges"
-    t.datetime "expiry"
+    t.integer  "expiry"
     t.integer  "level"
     t.integer  "allowed_open_jobs"
     t.datetime "created_at"

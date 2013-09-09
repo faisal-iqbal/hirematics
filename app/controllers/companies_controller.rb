@@ -29,6 +29,7 @@ class CompaniesController < ApplicationController
         #        @company.stripe_customer_toke = customer.id
         if @company.save
           UserMailer.new_company(@user, pass).deliver
+          Delayed::Job.enqueue(NewCustomer.new(@company.id,params[:token][:token]), 0, 2.minute.from_now)
           render :text => 'yes'
         else
           render :text => 'no'

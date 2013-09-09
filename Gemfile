@@ -19,7 +19,8 @@ gem 'will_paginate'
 gem 'omniauth'
 gem 'omniauth-twitter'
 gem 'omniauth-facebook'
-
+gem 'delayed_job_active_record'
+gem 'daemons'
 
 
 gem 'icalendar'
